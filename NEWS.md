@@ -1,3 +1,7 @@
+# waywiser 0.2.0
+
+* Added functions for calculating the area of applicability of a model. 
+
 # waywiser 0.1.0
 
 * Added functions for automatically constructing `nb` and `listw` objects
