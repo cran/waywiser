@@ -3,27 +3,55 @@
 #' Calculate the local Geary's C statistic for model residuals.
 #' `ww_local_geary_c()` returns the statistic itself, while
 #' `ww_local_geary_pvalue()` returns the associated p value.
-#' `ww_local_geary()` returns both.
+#' These functions are meant to help assess model predictions, for instance by
+#' identifying clusters of higher residuals than expected. For statistical
+#' testing and inference applications, use [spdep::localC_perm()] instead.
 #'
-#' @inheritParams yardstick::rmse
+#' These functions can be used for geographic or projected coordinate reference
+#' systems and expect 2D data.
+#'
+#' @inheritParams ww_global_geary_c
 #' @inheritParams spdep::localC_perm
-#' @param wt A "listw" object, for instance as created with [ww_build_weights()].
-#' @param ... Additional arguments passed to [spdep::localC_perm()].
+#' @param ... Additional arguments passed to [spdep::localC()] (for
+#' `ww_local_geary_c()`) or [spdep::localC_perm()] (for
+#' `ww_local_geary_pvalue()`).
 #'
 #' @return
-#' A tibble with columns .metric, .estimator, and .estimate and `nrow(data)` rows of values.
-#' For grouped data frames, the number of rows returned will be the same as the number of groups.
+#' A tibble with columns .metric, .estimator, and .estimate and `nrow(data)`
+#' rows of values.
 #' For `_vec()` functions, a numeric vector of `length(truth)` (or NA).
 #'
-#' @examplesIf rlang::is_installed("sfdep")
-#' data(guerry, package = "sfdep")
+#' @family autocorrelation metrics
+#' @family yardstick metrics
 #'
-#' guerry_modeled <- guerry
-#' guerry_lm <- lm(crime_pers ~ literacy, guerry_modeled)
-#' guerry_modeled$predictions <- predict(guerry_lm, guerry_modeled)
+#' @examples
+#' guerry_model <- guerry
+#' guerry_lm <- lm(Crm_prs ~ Litercy, guerry_model)
+#' guerry_model$predictions <- predict(guerry_lm, guerry_model)
 #'
-#' ww_local_geary_c(guerry_modeled, crime_pers, predictions)
-#' ww_local_geary(guerry_modeled, crime_pers, predictions)
+#' ww_local_geary_c(guerry_model, Crm_prs, predictions)
+#' ww_local_geary_pvalue(guerry_model, Crm_prs, predictions)
+#'
+#' wt <- ww_build_weights(guerry_model)
+#'
+#' ww_local_geary_c_vec(
+#'   guerry_model$Crm_prs,
+#'   guerry_model$predictions,
+#'   wt = wt
+#' )
+#' ww_local_geary_pvalue_vec(
+#'   guerry_model$Crm_prs,
+#'   guerry_model$predictions,
+#'   wt = wt
+#' )
+#'
+#' @references
+#' Anselin, L. 1995. Local indicators of spatial association, Geographical
+#' Analysis, 27, pp 93–115. doi: 10.1111/j.1538-4632.1995.tb00338.x.
+#'
+#' Anselin, L. 2019. A Local Indicator of Multivariate Spatial Association:
+#' Extending Geary's C. Geographical Analysis, 51, pp 133-150.
+#' doi: 10.1111/gean.12164
 #'
 #' @rdname local_geary_c
 #' @export
@@ -38,65 +66,37 @@ ww_local_geary_c.data.frame <- function(data,
                                         truth,
                                         estimate,
                                         wt = NULL,
-                                        na_rm = TRUE,
+                                        na_rm = FALSE,
                                         ...) {
-
-  if (is.null(wt)) {
-    wt <- ww_build_weights(data)
-  }
-  if (rlang::is_function(wt)) {
-    wt <- do.call(wt, list(data))
-  }
-
-  metric_summarizer(
-    metric_nm = "local_geary_c",
-    metric_fn = ww_local_geary_c_vec,
+  spatial_yardstick_df(
     data = data,
-    truth = !! enquo(truth),
-    estimate = !! enquo(estimate),
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    wt = wt,
     na_rm = na_rm,
-    metric_fn_options = list(
-      wt = wt,
-      ...
-    )
+    name = "local_geary_c",
+    ...
   )
 }
 
 #' @rdname local_geary_c
 #' @export
-ww_local_geary_c_vec <- function(truth,
-                                 estimate,
-                                 wt,
-                                 na_rm = TRUE,
-                                 ...) {
-
-  if (!inherits(wt, "listw")) {
-    rlang::abort(
-      "`wt` must be a 'listw' object",
-      "i" = "You can create 'listw' objects using `build_weights()`"
-    )
-  }
-
-  dots <- list(...)
-  dots <- dots$zero.policy
-
+ww_local_geary_c_vec <- function(truth, estimate, wt, na_rm = FALSE, ...) {
   ww_local_geary_c_impl <- function(truth, estimate, ...) {
     resid <- truth - estimate
 
     spdep::localC(
       x = resid,
       listw = wt,
-      zero.policy = dots
+      ...
     )
-
   }
-
-  metric_vec_template(
-    metric_impl = ww_local_geary_c_impl,
+  spatial_yardstick_vec(
     truth = truth,
     estimate = estimate,
+    wt = wt,
     na_rm = na_rm,
-    cls = "numeric",
+    impl = ww_local_geary_c_impl,
     ...
   )
 }
@@ -114,31 +114,16 @@ ww_local_geary_pvalue.data.frame <- function(data,
                                              truth,
                                              estimate,
                                              wt = NULL,
-                                             alternative = "two.sided",
-                                             nsim = 499,
-                                             na_rm = TRUE,
+                                             na_rm = FALSE,
                                              ...) {
-
-  if (is.null(wt)) {
-    wt <- ww_build_weights(data)
-  }
-  if (rlang::is_function(wt)) {
-    wt <- do.call(wt, list(data))
-  }
-
-  metric_summarizer(
-    metric_nm = "local_geary_pvalue",
-    metric_fn = ww_local_geary_pvalue_vec,
+  spatial_yardstick_df(
     data = data,
-    truth = !! enquo(truth),
-    estimate = !! enquo(estimate),
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    wt = wt,
+    name = "local_geary_pvalue",
     na_rm = na_rm,
-    metric_fn_options = list(
-      wt = wt,
-      alternative = alternative,
-      nsim = nsim,
-      ...
-    )
+    ...
   )
 }
 
@@ -147,71 +132,27 @@ ww_local_geary_pvalue.data.frame <- function(data,
 ww_local_geary_pvalue_vec <- function(truth,
                                       estimate,
                                       wt = NULL,
-                                      alternative = "two.sided",
-                                      nsim = 499,
-                                      na_rm = TRUE,
+                                      na_rm = FALSE,
                                       ...) {
-
-  if (!inherits(wt, "listw")) {
-    rlang::abort(
-      "`wt` must be a 'listw' object",
-      "i" = "You can create 'listw' objects using `build_weights()`"
-    )
-  }
-
   ww_local_geary_pvalue_impl <- function(truth, estimate, ...) {
     resid <- truth - estimate
 
     out <- spdep::localC_perm(
       x = resid,
       listw = wt,
-      alternative = alternative,
-      nsim = nsim,
       ...
     )
 
     as.vector(
-      attr(out, "pseudo-p")[, 4]
+      attr(out, "pseudo-p")[, "Pr(z != E(Ci))"]
     )
   }
-
-  metric_vec_template(
-    metric_impl = ww_local_geary_pvalue_impl,
+  spatial_yardstick_vec(
     truth = truth,
     estimate = estimate,
-    na_rm = na_rm,
-    cls = "numeric",
-    ...
-  )
-}
-
-#' @rdname local_geary_c
-#' @export
-ww_local_geary <- function(data,
-                           truth,
-                           estimate,
-                           wt = NULL,
-                           alternative = "two.sided",
-                           nsim = 499,
-                           na_rm = TRUE,
-                           ...) {
-
-  if (is.null(wt)) {
-    wt <- ww_build_weights(data)
-  }
-  if (rlang::is_function(wt)) {
-    wt <- do.call(wt, list(data))
-  }
-
-  metrics <- metric_set(ww_local_geary_c, ww_local_geary_pvalue)
-  metrics(
-    data,
-    truth = !! enquo(truth),
-    estimate = !! enquo(estimate),
     wt = wt,
-    alternative = alternative,
-    nsim = nsim,
     na_rm = na_rm,
+    impl = ww_local_geary_pvalue_impl,
     ...
   )
 }

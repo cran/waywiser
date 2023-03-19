@@ -3,32 +3,49 @@
 #' Calculate the local Getis-Ord G and G* statistic for model residuals.
 #' `ww_local_getis_ord_g()` returns the statistic itself, while
 #' `ww_local_getis_ord_pvalue()` returns the associated p value.
-#' `ww_local_getis_ord()` returns both.
+#' These functions are meant to help assess model predictions, for instance by
+#' identifying clusters of higher residuals than expected. For statistical
+#' testing and inference applications, use [spdep::localG_perm()] instead.
 #'
-#' @inheritParams yardstick::rmse
+#' These functions can be used for geographic or projected coordinate reference
+#' systems and expect 2D data.
+#'
+#' @inheritParams ww_global_geary_c
 #' @inheritParams spdep::localG_perm
-#' @param wt A "listw" object, for instance as created with [ww_build_weights()].
-#' @param ... Arguments passed to [spdep::localG_perm()]
-#' @inheritParams ww_build_weights
-#' @param include_self Include each region itself in its own list of neighbors?
-#' Only used when `wt` is `NULL`, and if `TRUE` means this function calculates
-#' G* instead of G.
+#' @param ... Additional arguments passed to [spdep::localG()] (for
+#' `ww_local_getis_ord_g()`) or [spdep::localG_perm()] (for
+#' `ww_local_getis_ord_pvalue()`).
 #'
-#' @return
-#' A tibble with columns .metric, .estimator, and .estimate and `nrow(data)` rows of values.
-#' For grouped data frames, the number of rows returned will be the same as the number of groups.
-#' For `_vec()` functions, a numeric vector of `length(truth)` (or NA).
+#' @inherit ww_local_geary_c return
 #'
-#' @examplesIf rlang::is_installed("sfdep")
-#' data(guerry, package = "sfdep")
+#' @family autocorrelation metrics
+#' @family yardstick metrics
 #'
-#' guerry_modeled <- guerry
-#' guerry_lm <- lm(crime_pers ~ literacy, guerry_modeled)
-#' guerry_modeled$predictions <- predict(guerry_lm, guerry_modeled)
+#' @examples
+#' guerry_model <- guerry
+#' guerry_lm <- lm(Crm_prs ~ Litercy, guerry_model)
+#' guerry_model$predictions <- predict(guerry_lm, guerry_model)
 #'
-#' ww_local_getis_ord_g(guerry_modeled, crime_pers, predictions)
-#' ww_local_getis_ord(guerry_modeled, crime_pers, predictions)
-#' ww_local_getis_ord(guerry_modeled, crime_pers, predictions, include_self = TRUE)
+#' ww_local_getis_ord_g(guerry_model, Crm_prs, predictions)
+#' ww_local_getis_ord_g_pvalue(guerry_model, Crm_prs, predictions)
+#'
+#' wt <- ww_build_weights(guerry_model)
+#'
+#' ww_local_getis_ord_g_vec(
+#'   guerry_model$Crm_prs,
+#'   guerry_model$predictions,
+#'   wt = wt
+#' )
+#' ww_local_getis_ord_g_pvalue_vec(
+#'   guerry_model$Crm_prs,
+#'   guerry_model$predictions,
+#'   wt = wt
+#' )
+#'
+#' @references
+#' Ord, J. K. and Getis, A. 1995. Local spatial autocorrelation statistics:
+#' distributional issues and an application. Geographical Analysis, 27, 286–306.
+#' doi: 10.1111/j.1538-4632.1995.tb00912.x
 #'
 #' @rdname local_getis_ord_g
 #' @export
@@ -43,194 +60,87 @@ ww_local_getis_ord_g.data.frame <- function(data,
                                             truth,
                                             estimate,
                                             wt = NULL,
-                                            alternative = "two.sided",
-                                            nsim = 499,
-                                            na_rm = TRUE,
-                                            ...,
-                                            include_self = FALSE) {
-
-  if (is.null(wt)) {
-    wt <- ww_build_weights(data, include_self = include_self)
-  }
-  if (rlang::is_function(wt)) {
-    wt <- do.call(wt, list(data))
-  }
-  metric_nm <- "local_getis_ord_g"
-  if (identical(attr(wt$neighbours, "self.included"), TRUE)) metric_nm <- "local_getis_ord_gstar"
-
-  metric_summarizer(
-    metric_nm = metric_nm,
-    metric_fn = ww_local_getis_ord_g_vec,
+                                            na_rm = FALSE,
+                                            ...) {
+  spatial_yardstick_df(
     data = data,
-    truth = !! enquo(truth),
-    estimate = !! enquo(estimate),
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    wt = wt,
     na_rm = na_rm,
-    metric_fn_options = list(
-      wt = wt,
-      alternative = alternative,
-      nsim = nsim,
-      ...
-    )
+    name = "local_getis_ord_g",
+    ...
   )
 }
 
 #' @rdname local_getis_ord_g
 #' @export
-ww_local_getis_ord_g_vec <- function(truth,
-                                     estimate,
-                                     wt = NULL,
-                                     alternative = "two.sided",
-                                     nsim = 499,
-                                     na_rm = TRUE,
-                                     ...,
-                                     include_self = FALSE) {
-
-  if (!inherits(wt, "listw")) {
-    rlang::abort(
-      "`wt` must be a 'listw' object",
-      "i" = "You can create 'listw' objects using `build_weights()`"
-    )
-  }
-
+ww_local_getis_ord_g_vec <- function(truth, estimate, wt, na_rm = FALSE, ...) {
   ww_local_getis_ord_g_impl <- function(truth, estimate, ...) {
     resid <- truth - estimate
-
     as.vector(
       spdep::localG(
         x = resid,
         listw = wt,
-        alternative = alternative,
         ...
       )
     )
-
   }
-
-  metric_vec_template(
-    metric_impl = ww_local_getis_ord_g_impl,
+  spatial_yardstick_vec(
     truth = truth,
     estimate = estimate,
+    wt = wt,
     na_rm = na_rm,
-    cls = "numeric",
+    impl = ww_local_getis_ord_g_impl,
     ...
   )
 }
 
 #' @rdname local_getis_ord_g
 #' @export
-ww_local_getis_ord_pvalue <- function(data, ...) {
-  UseMethod("ww_local_getis_ord_pvalue")
+ww_local_getis_ord_g_pvalue <- function(data, ...) {
+  UseMethod("ww_local_getis_ord_g_pvalue")
 }
 
-ww_local_getis_ord_pvalue <- new_numeric_metric(ww_local_getis_ord_pvalue, "minimize")
+ww_local_getis_ord_g_pvalue <- new_numeric_metric(ww_local_getis_ord_g_pvalue, "minimize")
 
 #' @export
-ww_local_getis_ord_pvalue.data.frame <- function(data,
-                                                 truth,
-                                                 estimate,
-                                                 wt = NULL,
-                                                 alternative = "two.sided",
-                                                 nsim = 499,
-                                                 na_rm = TRUE,
-                                                 ...,
-                                                 include_self = FALSE) {
-
-  if (is.null(wt)) {
-    wt <- ww_build_weights(data, include_self = include_self)
-  }
-  if (rlang::is_function(wt)) {
-    wt <- do.call(wt, list(data))
-  }
-  metric_nm <- "local_getis_ord_g_pvalue"
-  if (identical(attr(wt$neighbours, "self.included"), TRUE)) metric_nm <- "local_getis_ord_gstar_pvalue"
-
-  metric_summarizer(
-    metric_nm = metric_nm,
-    metric_fn = ww_local_getis_ord_pvalue_vec,
+ww_local_getis_ord_g_pvalue.data.frame <- function(data,
+                                                   truth,
+                                                   estimate,
+                                                   wt = NULL,
+                                                   na_rm = FALSE,
+                                                   ...) {
+  spatial_yardstick_df(
     data = data,
-    truth = !! enquo(truth),
-    estimate = !! enquo(estimate),
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    wt = wt,
     na_rm = na_rm,
-    metric_fn_options = list(
-      wt = wt,
-      alternative = alternative,
-      nsim = nsim,
-      ...
-    )
+    name = "local_getis_ord_g_pvalue",
+    ...
   )
 }
 
 #' @rdname local_getis_ord_g
 #' @export
-ww_local_getis_ord_pvalue_vec <- function(truth,
-                                          estimate,
-                                          wt = NULL,
-                                          alternative = "two.sided",
-                                          nsim = 499,
-                                          na_rm = TRUE,
-                                          ...,
-                                          include_self = FALSE) {
-
-  if (!inherits(wt, "listw")) {
-    rlang::abort(
-      "`wt` must be a 'listw' object",
-      "i" = "You can create 'listw' objects using `build_weights()`"
-    )
-  }
-
+ww_local_getis_ord_g_pvalue_vec <- function(truth, estimate, wt, na_rm = FALSE, ...) {
   ww_local_getis_ord_pvalue_impl <- function(truth, estimate, ...) {
     resid <- truth - estimate
-
     out <- spdep::localG_perm(
       x = resid,
       listw = wt,
-      alternative = alternative,
-      nsim = nsim
+      ...
     )
-    out <- attr(out, "internals")
-    as.vector(out[, 4])
-
+    as.vector(attr(out, "internals")[, "Pr(z != E(Gi))"])
   }
 
-  metric_vec_template(
-    metric_impl = ww_local_getis_ord_pvalue_impl,
+  spatial_yardstick_vec(
     truth = truth,
     estimate = estimate,
-    na_rm = na_rm,
-    cls = "numeric",
-    ...
-  )
-}
-
-#' @rdname local_getis_ord_g
-#' @export
-ww_local_getis_ord <- function(data,
-                               truth,
-                               estimate,
-                               wt = NULL,
-                               alternative = "two.sided",
-                               nsim = 499,
-                               na_rm = TRUE,
-                               ...,
-                               include_self = FALSE) {
-
-  if (is.null(wt)) {
-    wt <- ww_build_weights(data, include_self = include_self)
-  }
-  if (rlang::is_function(wt)) {
-    wt <- do.call(wt, list(data))
-  }
-
-  metrics <- metric_set(ww_local_getis_ord_g, ww_local_getis_ord_pvalue)
-  metrics(
-    data,
-    truth = !! enquo(truth),
-    estimate = !! enquo(estimate),
     wt = wt,
-    alternative = alternative,
-    nsim = nsim,
     na_rm = na_rm,
-    ...,
-    include_self = include_self
+    impl = ww_local_getis_ord_pvalue_impl,
+    ...
   )
 }

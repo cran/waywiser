@@ -3,27 +3,50 @@
 #' Calculate the local Moran's I statistic for model residuals.
 #' `ww_local_moran_i()` returns the statistic itself, while
 #' `ww_local_moran_pvalue()` returns the associated p value.
-#' `ww_local_moran()` returns both.
+#' These functions are meant to help assess model predictions, for instance by
+#' identifying clusters of higher residuals than expected. For statistical
+#' testing and inference applications, use [spdep::localmoran_perm()] instead.
 #'
-#' @inheritParams yardstick::rmse
+#' These functions can be used for geographic or projected coordinate reference
+#' systems and expect 2D data.
+#'
+#' @inheritParams ww_global_geary_c
 #' @inheritParams spdep::localmoran
-#' @param wt A "listw" object, for instance as created with [ww_build_weights()].
 #' @param ... Additional arguments passed to [spdep::localmoran()].
 #'
-#' @return
-#' A tibble with columns .metric, .estimator, and .estimate and `nrow(data)` rows of values.
-#' For grouped data frames, the number of rows returned will be the same as the number of groups.
-#' For `_vec()` functions, a numeric vector of `length(truth)` (or NA).
+#' @inherit ww_local_geary_c return
 #'
-#' @examplesIf rlang::is_installed("sfdep")
-#' data(guerry, package = "sfdep")
+#' @family autocorrelation metrics
+#' @family yardstick metrics
 #'
-#' guerry_modeled <- guerry
-#' guerry_lm <- lm(crime_pers ~ literacy, guerry_modeled)
-#' guerry_modeled$predictions <- predict(guerry_lm, guerry_modeled)
+#' @examples
+#' guerry_model <- guerry
+#' guerry_lm <- lm(Crm_prs ~ Litercy, guerry_model)
+#' guerry_model$predictions <- predict(guerry_lm, guerry_model)
 #'
-#' ww_local_moran_i(guerry_modeled, crime_pers, predictions)
-#' ww_local_moran(guerry_modeled, crime_pers, predictions)
+#' ww_local_moran_i(guerry_model, Crm_prs, predictions)
+#' ww_local_moran_pvalue(guerry_model, Crm_prs, predictions)
+#'
+#' wt <- ww_build_weights(guerry_model)
+#'
+#' ww_local_moran_i_vec(
+#'   guerry_model$Crm_prs,
+#'   guerry_model$predictions,
+#'   wt = wt
+#' )
+#' ww_local_moran_pvalue_vec(
+#'   guerry_model$Crm_prs,
+#'   guerry_model$predictions,
+#'   wt = wt
+#' )
+#'
+#' @references
+#' Anselin, L. 1995. Local indicators of spatial association, Geographical
+#' Analysis, 27, pp 93–115. doi: 10.1111/j.1538-4632.1995.tb00338.x.
+#'
+#' Sokal, R. R, Oden, N. L. and Thomson, B. A. 1998. Local Spatial
+#' Autocorrelation in a Biological Model. Geographical Analysis, 30, pp 331–354.
+#' doi: 10.1111/j.1538-4632.1998.tb00406.x
 #'
 #' @rdname local_moran_i
 #' @export
@@ -38,66 +61,37 @@ ww_local_moran_i.data.frame <- function(data,
                                         truth,
                                         estimate,
                                         wt = NULL,
-                                        alternative = "two.sided",
-                                        na_rm = TRUE,
+                                        na_rm = FALSE,
                                         ...) {
-
-  if (is.null(wt)) {
-    wt <- ww_build_weights(data)
-  }
-  if (rlang::is_function(wt)) {
-    wt <- do.call(wt, list(data))
-  }
-
-  metric_summarizer(
-    metric_nm = "local_moran_i",
-    metric_fn = ww_local_moran_i_vec,
+  spatial_yardstick_df(
     data = data,
-    truth = !! enquo(truth),
-    estimate = !! enquo(estimate),
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    wt = wt,
     na_rm = na_rm,
-    metric_fn_options = list(
-      wt = wt,
-      alternative = alternative,
-      ...
-    )
+    name = "local_moran_i",
+    ...
   )
 }
 
 #' @rdname local_moran_i
 #' @export
-ww_local_moran_i_vec <- function(truth,
-                                 estimate,
-                                 wt = NULL,
-                                 alternative = "two.sided",
-                                 na_rm = TRUE,
-                                 ...) {
-
-  if (!inherits(wt, "listw")) {
-    rlang::abort(
-      "`wt` must be a 'listw' object",
-      "i" = "You can create 'listw' objects using `build_weights()`"
-    )
-  }
-
+ww_local_moran_i_vec <- function(truth, estimate, wt, na_rm = FALSE, ...) {
   ww_local_moran_i_impl <- function(truth, estimate, ...) {
     resid <- truth - estimate
 
     spdep::localmoran(
       x = resid,
       listw = wt,
-      alternative = alternative,
       ...
     )[, 1]
-
   }
-
-  metric_vec_template(
-    metric_impl = ww_local_moran_i_impl,
+  spatial_yardstick_vec(
     truth = truth,
     estimate = estimate,
+    wt = wt,
     na_rm = na_rm,
-    cls = "numeric",
+    impl = ww_local_moran_i_impl,
     ...
   )
 }
@@ -115,29 +109,16 @@ ww_local_moran_pvalue.data.frame <- function(data,
                                              truth,
                                              estimate,
                                              wt = NULL,
-                                             alternative = "two.sided",
-                                             na_rm = TRUE,
+                                             na_rm = FALSE,
                                              ...) {
-
-  if (is.null(wt)) {
-    wt <- ww_build_weights(data)
-  }
-  if (rlang::is_function(wt)) {
-    wt <- do.call(wt, list(data))
-  }
-
-  metric_summarizer(
-    metric_nm = "local_moran_pvalue",
-    metric_fn = ww_local_moran_pvalue_vec,
+  spatial_yardstick_df(
     data = data,
-    truth = !! enquo(truth),
-    estimate = !! enquo(estimate),
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    wt = wt,
+    name = "local_moran_pvalue",
     na_rm = na_rm,
-    metric_fn_options = list(
-      wt = wt,
-      alternative = alternative,
-      ...
-    )
+    ...
   )
 }
 
@@ -146,64 +127,23 @@ ww_local_moran_pvalue.data.frame <- function(data,
 ww_local_moran_pvalue_vec <- function(truth,
                                       estimate,
                                       wt = NULL,
-                                      alternative = "two.sided",
-                                      na_rm = TRUE,
+                                      na_rm = FALSE,
                                       ...) {
-
-  if (!inherits(wt, "listw")) {
-    rlang::abort(
-      "`wt` must be a 'listw' object",
-      "i" = "You can create 'listw' objects using `build_weights()`"
-    )
-  }
-
   ww_local_moran_pvalue_impl <- function(truth, estimate, ...) {
     resid <- truth - estimate
 
     spdep::localmoran(
       x = resid,
       listw = wt,
-      alternative = alternative,
       ...
     )[, 5]
-
   }
-
-  metric_vec_template(
-    metric_impl = ww_local_moran_pvalue_impl,
+  spatial_yardstick_vec(
     truth = truth,
     estimate = estimate,
-    na_rm = na_rm,
-    cls = "numeric",
-    ...
-  )
-}
-
-#' @rdname local_moran_i
-#' @export
-ww_local_moran <- function(data,
-                           truth,
-                           estimate,
-                           wt = NULL,
-                           alternative = "two.sided",
-                           na_rm = TRUE,
-                           ...) {
-
-  if (is.null(wt)) {
-    wt <- ww_build_weights(data)
-  }
-  if (rlang::is_function(wt)) {
-    wt <- do.call(wt, list(data))
-  }
-
-  metrics <- metric_set(ww_local_moran_i, ww_local_moran_pvalue)
-  metrics(
-    data,
-    truth = !! enquo(truth),
-    estimate = !! enquo(estimate),
     wt = wt,
-    alternative = alternative,
     na_rm = na_rm,
+    impl = ww_local_moran_pvalue_impl,
     ...
   )
 }

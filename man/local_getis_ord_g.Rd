@@ -3,54 +3,25 @@
 \name{ww_local_getis_ord_g}
 \alias{ww_local_getis_ord_g}
 \alias{ww_local_getis_ord_g_vec}
-\alias{ww_local_getis_ord_pvalue}
-\alias{ww_local_getis_ord_pvalue_vec}
-\alias{ww_local_getis_ord}
+\alias{ww_local_getis_ord_g_pvalue}
+\alias{ww_local_getis_ord_g_pvalue_vec}
 \title{Local Getis-Ord G and G* statistic}
 \usage{
 ww_local_getis_ord_g(data, ...)
 
-ww_local_getis_ord_g_vec(
-  truth,
-  estimate,
-  wt = NULL,
-  alternative = "two.sided",
-  nsim = 499,
-  na_rm = TRUE,
-  ...,
-  include_self = FALSE
-)
+ww_local_getis_ord_g_vec(truth, estimate, wt, na_rm = FALSE, ...)
 
-ww_local_getis_ord_pvalue(data, ...)
+ww_local_getis_ord_g_pvalue(data, ...)
 
-ww_local_getis_ord_pvalue_vec(
-  truth,
-  estimate,
-  wt = NULL,
-  alternative = "two.sided",
-  nsim = 499,
-  na_rm = TRUE,
-  ...,
-  include_self = FALSE
-)
-
-ww_local_getis_ord(
-  data,
-  truth,
-  estimate,
-  wt = NULL,
-  alternative = "two.sided",
-  nsim = 499,
-  na_rm = TRUE,
-  ...,
-  include_self = FALSE
-)
+ww_local_getis_ord_g_pvalue_vec(truth, estimate, wt, na_rm = FALSE, ...)
 }
 \arguments{
 \item{data}{A \code{data.frame} containing the columns specified by the \code{truth}
 and \code{estimate} arguments.}
 
-\item{...}{Arguments passed to \code{\link[spdep:localG]{spdep::localG_perm()}}}
+\item{...}{Additional arguments passed to \code{\link[spdep:localG]{spdep::localG()}} (for
+\code{ww_local_getis_ord_g()}) or \code{\link[spdep:localG]{spdep::localG_perm()}} (for
+\code{ww_local_getis_ord_pvalue()}).}
 
 \item{truth}{The column identifier for the true results
 (that is \code{numeric}). This should be an unquoted column name although
@@ -63,40 +34,71 @@ results (that is also \code{numeric}). As with \code{truth} this can be
 specified different ways but the primary method is to use an
 unquoted variable name. For \verb{_vec()} functions, a \code{numeric} vector.}
 
-\item{wt}{A "listw" object, for instance as created with \code{\link[=ww_build_weights]{ww_build_weights()}}.}
-
-\item{alternative}{a character string specifying the alternative hypothesis, must be one of \code{"two.sided"} (default), \code{"greater"} or \code{"less"}.}
-
-\item{nsim}{default 499, number of conditonal permutation simulations}
+\item{wt}{A \code{listw} object, for instance as created with \code{\link[=ww_build_weights]{ww_build_weights()}}.
+For data.frame input, may also be a function that takes \code{data} and returns a
+\code{listw} object.}
 
 \item{na_rm}{A \code{logical} value indicating whether \code{NA}
 values should be stripped before the computation proceeds.}
-
-\item{include_self}{Include each region itself in its own list of neighbors?
-Only used when \code{wt} is \code{NULL}, and if \code{TRUE} means this function calculates
-G* instead of G.}
 }
 \value{
-A tibble with columns .metric, .estimator, and .estimate and \code{nrow(data)} rows of values.
-For grouped data frames, the number of rows returned will be the same as the number of groups.
+A tibble with columns .metric, .estimator, and .estimate and \code{nrow(data)}
+rows of values.
 For \verb{_vec()} functions, a numeric vector of \code{length(truth)} (or NA).
 }
 \description{
 Calculate the local Getis-Ord G and G* statistic for model residuals.
 \code{ww_local_getis_ord_g()} returns the statistic itself, while
 \code{ww_local_getis_ord_pvalue()} returns the associated p value.
-\code{ww_local_getis_ord()} returns both.
+These functions are meant to help assess model predictions, for instance by
+identifying clusters of higher residuals than expected. For statistical
+testing and inference applications, use \code{\link[spdep:localG]{spdep::localG_perm()}} instead.
+}
+\details{
+These functions can be used for geographic or projected coordinate reference
+systems and expect 2D data.
 }
 \examples{
-\dontshow{if (rlang::is_installed("sfdep")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-data(guerry, package = "sfdep")
+guerry_model <- guerry
+guerry_lm <- lm(Crm_prs ~ Litercy, guerry_model)
+guerry_model$predictions <- predict(guerry_lm, guerry_model)
 
-guerry_modeled <- guerry
-guerry_lm <- lm(crime_pers ~ literacy, guerry_modeled)
-guerry_modeled$predictions <- predict(guerry_lm, guerry_modeled)
+ww_local_getis_ord_g(guerry_model, Crm_prs, predictions)
+ww_local_getis_ord_g_pvalue(guerry_model, Crm_prs, predictions)
 
-ww_local_getis_ord_g(guerry_modeled, crime_pers, predictions)
-ww_local_getis_ord(guerry_modeled, crime_pers, predictions)
-ww_local_getis_ord(guerry_modeled, crime_pers, predictions, include_self = TRUE)
-\dontshow{\}) # examplesIf}
+wt <- ww_build_weights(guerry_model)
+
+ww_local_getis_ord_g_vec(
+  guerry_model$Crm_prs,
+  guerry_model$predictions,
+  wt = wt
+)
+ww_local_getis_ord_g_pvalue_vec(
+  guerry_model$Crm_prs,
+  guerry_model$predictions,
+  wt = wt
+)
+
 }
+\references{
+Ord, J. K. and Getis, A. 1995. Local spatial autocorrelation statistics:
+distributional issues and an application. Geographical Analysis, 27, 286–306.
+doi: 10.1111/j.1538-4632.1995.tb00912.x
+}
+\seealso{
+Other autocorrelation metrics: 
+\code{\link{ww_global_geary_c}()},
+\code{\link{ww_global_moran_i}()},
+\code{\link{ww_local_geary_c}()},
+\code{\link{ww_local_moran_i}()}
+
+Other yardstick metrics: 
+\code{\link{ww_agreement_coefficient}()},
+\code{\link{ww_global_geary_c}()},
+\code{\link{ww_global_moran_i}()},
+\code{\link{ww_local_geary_c}()},
+\code{\link{ww_local_moran_i}()},
+\code{\link{ww_willmott_d}()}
+}
+\concept{autocorrelation metrics}
+\concept{yardstick metrics}

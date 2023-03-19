@@ -11,21 +11,9 @@
 \usage{
 ww_area_of_applicability(x, ...)
 
-\method{ww_area_of_applicability}{data.frame}(
-  x,
-  testing = NULL,
-  importance,
-  ...,
-  na_action = na.fail
-)
+\method{ww_area_of_applicability}{data.frame}(x, testing = NULL, importance, ..., na_rm = FALSE)
 
-\method{ww_area_of_applicability}{matrix}(
-  x,
-  testing = NULL,
-  importance,
-  ...,
-  na_action = na.fail
-)
+\method{ww_area_of_applicability}{matrix}(x, testing = NULL, importance, ..., na_rm = FALSE)
 
 \method{ww_area_of_applicability}{formula}(
   x,
@@ -33,7 +21,7 @@ ww_area_of_applicability(x, ...)
   testing = NULL,
   importance,
   ...,
-  na_action = na.fail
+  na_rm = FALSE
 )
 
 \method{ww_area_of_applicability}{recipe}(
@@ -42,10 +30,10 @@ ww_area_of_applicability(x, ...)
   testing = NULL,
   importance,
   ...,
-  na_action = na.fail
+  na_rm = FALSE
 )
 
-\method{ww_area_of_applicability}{rset}(x, y = NULL, importance, ..., na_action = na.fail)
+\method{ww_area_of_applicability}{rset}(x, y = NULL, importance, ..., na_rm = FALSE)
 }
 \arguments{
 \item{x}{Either a data frame, matrix, formula
@@ -75,20 +63,19 @@ applicability.}
 \item A data.frame with two columns: \code{term}, containing the names of each
 variable in the training and testing data, and \code{estimate}, containing
 the (raw or scaled) feature importance for each variable.
-\item An object of class \code{vi} with at least two columns, \code{Variable} and \code{Importance}.
+\item An object of class \code{vi} with at least two columns, \code{Variable} and
+\code{Importance}.
 }
 
 All variables in the training data (\code{x} or \code{data}, depending on the context)
 must have a matching importance estimate, and all terms with importance
 estimates must be in the training data.}
 
-\item{na_action}{A function which indicates what should happen when the data
-(any of \code{x}, \code{data}, or \code{testing}) contain NAs. The default is \code{na.fail};
-you may wish to set it to \code{na.omit} or any of the functions from the "zoo"
-package. This function ignores the value of \code{options("na.action")} in order
-to make cross-computer (and cross-session) results more stable. Note that
-this argument only impacts fitting the area of applicability and has no
-impact on predictions.}
+\item{na_rm}{A logical of length 1, indicating whether observations (in both
+training and testing) with \code{NA} values in predictors should be removed. Only
+predictor variables are considered, and this value has no impact on
+predictions (where \code{NA} values produce \code{NA} predictions). If \code{na_rm = FALSE}
+and \code{NA} values are found, this function returns an error.}
 
 \item{data}{The data frame representing your "training" data, when using the
 formula or recipe methods.}
@@ -101,15 +88,17 @@ doesn't match the one used to build the model, the returned area of
 applicability won't be correct.}
 }
 \value{
-A \code{ww_area_of_applicability} object, which can be used with \code{\link[=predict]{predict()}}
-to calculate the distance of new data to the original training data, and
+A \code{ww_area_of_applicability} object, which can be used with \code{\link[=predict]{predict()}} to
+calculate the distance of new data to the original training data, and
 determine if new data is within a model's area of applicability.
 }
 \description{
 This function calculates the "area of applicability" of a model, as
 introduced by Meyer and Pebesma (2021). While the initial paper introducing
 this method focused on spatial models, there is nothing inherently spatial
-about the method; it can be used with any type of data.
+about the method; it can be used with any type of data (and, because it does
+not care about the spatial arrangement of your data, can be used with 2D or
+3D spatial data, and with geographic or projected CRS).
 }
 \details{
 Predictions made on points "inside" the area of applicability should be as
@@ -173,7 +162,7 @@ CAST when using \code{rset} objects.
 
 \examples{
 \dontshow{if (rlang::is_installed("vip")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-train <- vip::gen_friedman(1000, seed = 101)  # ?vip::gen_friedman
+train <- vip::gen_friedman(1000, seed = 101) # ?vip::gen_friedman
 test <- train[701:1000, ]
 train <- train[1:700, ]
 pp <- stats::ppr(y ~ ., data = train, nterms = 11)
@@ -186,6 +175,14 @@ importance <- vip::vi_permute(
 
 aoa <- ww_area_of_applicability(y ~ ., train, test, importance = importance)
 predict(aoa, test)
+
+# Equivalent methods for calculating AOA:
+ww_area_of_applicability(train[2:11], test[2:11], importance)
+ww_area_of_applicability(
+  as.matrix(train[2:11]),
+  as.matrix(test[2:11]),
+  importance
+)
 \dontshow{\}) # examplesIf}
 }
 \references{

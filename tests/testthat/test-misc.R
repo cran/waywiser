@@ -1,7 +1,4 @@
 test_that("ww_make_point_neighbors is stable", {
-
-  skip_if_not(rlang::is_installed("sfdep"))
-  data(guerry, package = "sfdep")
   guerry_pt <- sf::st_geometry(guerry)
   guerry_pt <- sf::st_centroid(guerry_pt)
   expect_snapshot(
@@ -11,14 +8,9 @@ test_that("ww_make_point_neighbors is stable", {
   expect_snapshot(
     ww_make_point_neighbors(guerry_pt, k = 2)
   )
-
 })
 
 test_that("ww_make_polygon_neighbors is stable", {
-
-  skip_if_not(rlang::is_installed("sfdep"))
-  data(guerry, package = "sfdep")
-
   expect_snapshot(
     ww_make_polygon_neighbors(guerry)
   )
@@ -26,20 +18,15 @@ test_that("ww_make_polygon_neighbors is stable", {
   expect_snapshot(
     ww_make_polygon_neighbors(guerry, queen = FALSE)
   )
-
 })
 
 test_that("ww_build_neighbors is stable", {
-
-  skip_if_not(rlang::is_installed("sfdep"))
-  data(guerry, package = "sfdep")
-
   expect_snapshot(
     ww_build_neighbors(guerry)
   )
 
   expect_identical(
-    ww_build_neighbors(sf::st_polygon(), ww_build_neighbors(guerry)),
+    ww_build_neighbors(sf::st_sfc(), ww_build_neighbors(guerry)),
     ww_build_neighbors(guerry)
   )
 
@@ -57,14 +44,9 @@ test_that("ww_build_neighbors is stable", {
     ww_build_neighbors(guerry, function(data) data),
     error = TRUE
   )
-
 })
 
 test_that("ww_build_weights is stable", {
-
-  skip_if_not(rlang::is_installed("sfdep"))
-  data(guerry, package = "sfdep")
-
   expect_snapshot(
     ww_build_weights(guerry)
   )
@@ -89,4 +71,24 @@ test_that("ww_build_weights is stable", {
     error = TRUE
   )
 
+  expect_snapshot(
+    ww_build_weights(guerry, include_self = TRUE)
+  )
+})
+
+test_that("expected_errors", {
+  expect_snapshot(
+    ww_build_neighbors(as.data.frame(guerry)),
+    error = TRUE
+  )
+
+  expect_snapshot(
+    ww_make_point_neighbors(as.data.frame(guerry)),
+    error = TRUE
+  )
+
+  expect_snapshot(
+    ww_make_point_neighbors(guerry, k = c(1, 5)),
+    error = TRUE
+  )
 })

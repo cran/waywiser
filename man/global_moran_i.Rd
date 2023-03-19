@@ -5,49 +5,23 @@
 \alias{ww_global_moran_i_vec}
 \alias{ww_global_moran_pvalue}
 \alias{ww_global_moran_pvalue_vec}
-\alias{ww_global_moran}
 \title{Global Moran's I statistic}
 \usage{
 ww_global_moran_i(data, ...)
 
-ww_global_moran_i_vec(
-  truth,
-  estimate,
-  wt = NULL,
-  alternative = "greater",
-  randomization = TRUE,
-  na_rm = TRUE,
-  ...
-)
+ww_global_moran_i_vec(truth, estimate, wt = NULL, na_rm = FALSE, ...)
 
 ww_global_moran_pvalue(data, ...)
 
-ww_global_moran_pvalue_vec(
-  truth,
-  estimate,
-  wt = NULL,
-  alternative = "greater",
-  randomization = TRUE,
-  na_rm = TRUE,
-  ...
-)
-
-ww_global_moran(
-  data,
-  truth,
-  estimate,
-  wt = NULL,
-  alternative = "greater",
-  randomization = TRUE,
-  na_rm = TRUE,
-  ...
-)
+ww_global_moran_pvalue_vec(truth, estimate, wt = NULL, na_rm = FALSE, ...)
 }
 \arguments{
 \item{data}{A \code{data.frame} containing the columns specified by the \code{truth}
 and \code{estimate} arguments.}
 
-\item{...}{Additional arguments passed to \code{\link[spdep:moran.test]{spdep::moran.test()}}.}
+\item{...}{Additional arguments passed to \code{\link[spdep:moran]{spdep::moran()}} (for
+\code{ww_global_moran_i()}) or \code{\link[spdep:moran.test]{spdep::moran.test()}} (for
+\code{ww_global_moran_pvalue()}).}
 
 \item{truth}{The column identifier for the true results
 (that is \code{numeric}). This should be an unquoted column name although
@@ -60,35 +34,74 @@ results (that is also \code{numeric}). As with \code{truth} this can be
 specified different ways but the primary method is to use an
 unquoted variable name. For \verb{_vec()} functions, a \code{numeric} vector.}
 
-\item{wt}{A "listw" object, for instance as created with \code{\link[=ww_build_weights]{ww_build_weights()}}.}
-
-\item{alternative}{a character string specifying the alternative hypothesis, must be one of greater (default), less or two.sided.}
-
-\item{randomization}{variance of I calculated under the assumption of randomisation, if FALSE normality}
+\item{wt}{A \code{listw} object, for instance as created with \code{\link[=ww_build_weights]{ww_build_weights()}}.
+For data.frame input, may also be a function that takes \code{data} and returns a
+\code{listw} object.}
 
 \item{na_rm}{A \code{logical} value indicating whether \code{NA}
 values should be stripped before the computation proceeds.}
 }
 \value{
-A tibble with columns .metric, .estimator, and .estimate and \code{nrow(data)} rows of values.
-For grouped data frames, the number of rows returned will be the same as the number of groups.
+A tibble with columns .metric, .estimator, and .estimate and 1 row of values.
+For grouped data frames, the number of rows returned will be the same as the
+number of groups.
 For \verb{_vec()} functions, a single value (or NA).
 }
 \description{
 Calculate the global Moran's I statistic for model residuals.
 \code{ww_global_moran_i()} returns the statistic itself, while
 \code{ww_global_moran_pvalue()} returns the associated p value.
-\code{ww_global_moran()} returns both.
+These functions are meant to help assess model predictions, for instance by
+identifying if there are clusters of higher residuals than expected. For
+statistical testing and inference applications, use
+\code{\link[spdep:moran.test]{spdep::moran.test()}} instead.
+}
+\details{
+These functions can be used for geographic or projected coordinate reference
+systems and expect 2D data.
 }
 \examples{
-\dontshow{if (rlang::is_installed("sfdep")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-data(guerry, package = "sfdep")
+guerry_model <- guerry
+guerry_lm <- lm(Crm_prs ~ Litercy, guerry_model)
+guerry_model$predictions <- predict(guerry_lm, guerry_model)
 
-guerry_modeled <- guerry
-guerry_lm <- lm(crime_pers ~ literacy, guerry_modeled)
-guerry_modeled$predictions <- predict(guerry_lm, guerry_modeled)
+ww_global_moran_i(guerry_model, Crm_prs, predictions)
+ww_global_moran_pvalue(guerry_model, Crm_prs, predictions)
 
-ww_global_moran_i(guerry_modeled, crime_pers, predictions)
-ww_global_moran(guerry_modeled, crime_pers, predictions)
-\dontshow{\}) # examplesIf}
+wt <- ww_build_weights(guerry_model)
+
+ww_global_moran_i_vec(
+  guerry_model$Crm_prs,
+  guerry_model$predictions,
+  wt = wt
+)
+ww_global_moran_pvalue_vec(
+  guerry_model$Crm_prs,
+  guerry_model$predictions,
+  wt = wt
+)
+
 }
+\references{
+Moran, P.A.P. (1950). "Notes on Continuous Stochastic Phenomena." Biometrika,
+37(1/2), pp 17. doi: 10.2307/2332142
+
+Cliff, A. D., Ord, J. K. 1981 Spatial processes, Pion, p. 17.
+}
+\seealso{
+Other autocorrelation metrics: 
+\code{\link{ww_global_geary_c}()},
+\code{\link{ww_local_geary_c}()},
+\code{\link{ww_local_getis_ord_g}()},
+\code{\link{ww_local_moran_i}()}
+
+Other yardstick metrics: 
+\code{\link{ww_agreement_coefficient}()},
+\code{\link{ww_global_geary_c}()},
+\code{\link{ww_local_geary_c}()},
+\code{\link{ww_local_getis_ord_g}()},
+\code{\link{ww_local_moran_i}()},
+\code{\link{ww_willmott_d}()}
+}
+\concept{autocorrelation metrics}
+\concept{yardstick metrics}

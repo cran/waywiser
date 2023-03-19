@@ -19,7 +19,7 @@ A tibble of predictions, with two columns: \code{di}, numeric, contains the
 contains whether a row is inside (\code{TRUE}) or outside (\code{FALSE}) the area of
 applicability.
 
-Note that this function is often called using \code{\link[raster:predict]{raster::predict()}} or
+Note that this function is often called using
 \code{\link[terra:predict]{terra::predict()}}, in which case \code{aoa} will be converted to numeric
 implicitly; \code{1} values correspond to cells "inside" the area of applicability
 and \code{0} corresponds to cells "outside" the AOA.
@@ -38,7 +38,7 @@ whether or not they are "inside" the area of applicability.
 \examples{
 \dontshow{if (rlang::is_installed("vip")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 library(vip)
-train <- gen_friedman(1000, seed = 101)  # ?vip::gen_friedman
+train <- gen_friedman(1000, seed = 101) # ?vip::gen_friedman
 test <- train[701:1000, ]
 train <- train[1:700, ]
 pp <- stats::ppr(y ~ ., data = train, nterms = 11)

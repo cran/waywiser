@@ -5,40 +5,15 @@
 \alias{ww_local_moran_i_vec}
 \alias{ww_local_moran_pvalue}
 \alias{ww_local_moran_pvalue_vec}
-\alias{ww_local_moran}
 \title{Local Moran's I statistic}
 \usage{
 ww_local_moran_i(data, ...)
 
-ww_local_moran_i_vec(
-  truth,
-  estimate,
-  wt = NULL,
-  alternative = "two.sided",
-  na_rm = TRUE,
-  ...
-)
+ww_local_moran_i_vec(truth, estimate, wt, na_rm = FALSE, ...)
 
 ww_local_moran_pvalue(data, ...)
 
-ww_local_moran_pvalue_vec(
-  truth,
-  estimate,
-  wt = NULL,
-  alternative = "two.sided",
-  na_rm = TRUE,
-  ...
-)
-
-ww_local_moran(
-  data,
-  truth,
-  estimate,
-  wt = NULL,
-  alternative = "two.sided",
-  na_rm = TRUE,
-  ...
-)
+ww_local_moran_pvalue_vec(truth, estimate, wt = NULL, na_rm = FALSE, ...)
 }
 \arguments{
 \item{data}{A \code{data.frame} containing the columns specified by the \code{truth}
@@ -57,33 +32,74 @@ results (that is also \code{numeric}). As with \code{truth} this can be
 specified different ways but the primary method is to use an
 unquoted variable name. For \verb{_vec()} functions, a \code{numeric} vector.}
 
-\item{wt}{A "listw" object, for instance as created with \code{\link[=ww_build_weights]{ww_build_weights()}}.}
-
-\item{alternative}{a character string specifying the alternative hypothesis, must be one of greater, less or two.sided (default).}
+\item{wt}{A \code{listw} object, for instance as created with \code{\link[=ww_build_weights]{ww_build_weights()}}.
+For data.frame input, may also be a function that takes \code{data} and returns a
+\code{listw} object.}
 
 \item{na_rm}{A \code{logical} value indicating whether \code{NA}
 values should be stripped before the computation proceeds.}
 }
 \value{
-A tibble with columns .metric, .estimator, and .estimate and \code{nrow(data)} rows of values.
-For grouped data frames, the number of rows returned will be the same as the number of groups.
+A tibble with columns .metric, .estimator, and .estimate and \code{nrow(data)}
+rows of values.
 For \verb{_vec()} functions, a numeric vector of \code{length(truth)} (or NA).
 }
 \description{
 Calculate the local Moran's I statistic for model residuals.
 \code{ww_local_moran_i()} returns the statistic itself, while
 \code{ww_local_moran_pvalue()} returns the associated p value.
-\code{ww_local_moran()} returns both.
+These functions are meant to help assess model predictions, for instance by
+identifying clusters of higher residuals than expected. For statistical
+testing and inference applications, use \code{\link[spdep:localmoran]{spdep::localmoran_perm()}} instead.
+}
+\details{
+These functions can be used for geographic or projected coordinate reference
+systems and expect 2D data.
 }
 \examples{
-\dontshow{if (rlang::is_installed("sfdep")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-data(guerry, package = "sfdep")
+guerry_model <- guerry
+guerry_lm <- lm(Crm_prs ~ Litercy, guerry_model)
+guerry_model$predictions <- predict(guerry_lm, guerry_model)
 
-guerry_modeled <- guerry
-guerry_lm <- lm(crime_pers ~ literacy, guerry_modeled)
-guerry_modeled$predictions <- predict(guerry_lm, guerry_modeled)
+ww_local_moran_i(guerry_model, Crm_prs, predictions)
+ww_local_moran_pvalue(guerry_model, Crm_prs, predictions)
 
-ww_local_moran_i(guerry_modeled, crime_pers, predictions)
-ww_local_moran(guerry_modeled, crime_pers, predictions)
-\dontshow{\}) # examplesIf}
+wt <- ww_build_weights(guerry_model)
+
+ww_local_moran_i_vec(
+  guerry_model$Crm_prs,
+  guerry_model$predictions,
+  wt = wt
+)
+ww_local_moran_pvalue_vec(
+  guerry_model$Crm_prs,
+  guerry_model$predictions,
+  wt = wt
+)
+
 }
+\references{
+Anselin, L. 1995. Local indicators of spatial association, Geographical
+Analysis, 27, pp 93–115. doi: 10.1111/j.1538-4632.1995.tb00338.x.
+
+Sokal, R. R, Oden, N. L. and Thomson, B. A. 1998. Local Spatial
+Autocorrelation in a Biological Model. Geographical Analysis, 30, pp 331–354.
+doi: 10.1111/j.1538-4632.1998.tb00406.x
+}
+\seealso{
+Other autocorrelation metrics: 
+\code{\link{ww_global_geary_c}()},
+\code{\link{ww_global_moran_i}()},
+\code{\link{ww_local_geary_c}()},
+\code{\link{ww_local_getis_ord_g}()}
+
+Other yardstick metrics: 
+\code{\link{ww_agreement_coefficient}()},
+\code{\link{ww_global_geary_c}()},
+\code{\link{ww_global_moran_i}()},
+\code{\link{ww_local_geary_c}()},
+\code{\link{ww_local_getis_ord_g}()},
+\code{\link{ww_willmott_d}()}
+}
+\concept{autocorrelation metrics}
+\concept{yardstick metrics}
