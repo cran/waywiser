@@ -4,7 +4,9 @@
 #'
 #' If `data` is `NULL`, then `truth` and `estimate` should both be `SpatRaster`
 #' objects, as created via [terra::rast()]. These rasters will then be
-#' aggregated to each grid using [exactextractr::exact_extract()].
+#' aggregated to each grid using [exactextractr::exact_extract()]. If `data`
+#' is a `SpatRaster` object, then `truth` and `estimate` should be indices to
+#' select the appropriate layers of the raster via [terra::subset()].
 #'
 #' Grids are calculated using the bounding box of `truth`, under the assumption
 #' that you may have extrapolated into regions which do not have matching "true"
@@ -31,16 +33,27 @@
 #' then `cellsize` will be automatically adjusted to create the requested
 #' number of cells.
 #'
+#' Grids are created by mapping over each argument passed via `...`
+#' simultaneously, in a similar manner to [mapply()] or [purrr::pmap()]. This
+#' means that, for example, passing `n = list(c(1, 2))` will create a single
+#' 1x2 grid, while passing `n = c(1, 2)` will create a 1x1 grid _and_ a 2x2
+#' grid. It also means that arguments will be recycled using R's standard
+#' vector recycling rules, so that passing `n = c(1, 2)` and `square = FALSE`
+#' will create two separate grids of hexagons.
+#'
 #' This function can be used for geographic or projected coordinate reference
 #' systems and expects 2D data.
 #'
-#' @param data Either a point geometry `sf` object containing the columns
-#' specified by the `truth` and `estimate` arguments, or `NULL` if `truth` and
-#' `estimate` are `SpatRaster` objects.
+#' @param data Either: a point geometry `sf` object containing the columns
+#' specified by the `truth` and `estimate` arguments; a `SpatRaster` from
+#' the `terra` package containing layers specified by the `truth` and `estimate`
+#' arguments; or `NULL` if `truth` and `estimate` are `SpatRaster` objects.
 #' @param truth,estimate If `data` is an `sf` object, the names (optionally
 #' unquoted) for the columns in `data` containing the true and predicted values,
-#' respectively. If `data` is `NULL`, `SpatRaster` objects with a single layer
-#' containing the true and predicted values, respectively.
+#' respectively. If `data` is a `SpatRaster` object, either layer names or
+#' indices which will select the true and predicted layers, respectively, via
+#' [terra::subset()] If `data` is `NULL`, `SpatRaster` objects with a single
+#' layer containing the true and predicted values, respectively.
 #' @param metrics Either a [yardstick::metric_set()] object, or a list of
 #' functions which will be used to construct a [yardstick::metric_set()] object
 #' specifying the performance metrics to evaluate at each scale.
@@ -128,8 +141,19 @@ ww_multi_scale <- function(
     rlang::abort("Only one logical value can be passed to `na_rm`.")
   }
 
-  if (is.null(data)) {
-    UseMethod("ww_multi_scale", truth)
+  if (missing(data) || is.null(data)) {
+    ww_multi_scale_raster_args(
+      data = data,
+      truth = truth,
+      estimate = estimate,
+      metrics = metrics,
+      grids = grids,
+      ...,
+      na_rm = na_rm,
+      aggregation_function = aggregation_function,
+      autoexpand_grid = autoexpand_grid,
+      progress = progress
+    )
   } else {
     UseMethod("ww_multi_scale", data)
   }
@@ -137,6 +161,82 @@ ww_multi_scale <- function(
 
 #' @exportS3Method
 ww_multi_scale.SpatRaster <- function(
+    data = NULL,
+    truth,
+    estimate,
+    metrics = list(yardstick::rmse, yardstick::mae),
+    grids = NULL,
+    ...,
+    na_rm = TRUE,
+    aggregation_function = "mean",
+    autoexpand_grid = TRUE,
+    progress = TRUE) {
+  rlang::check_installed("terra")
+  rlang::check_installed("exactextractr")
+
+  data <- tryCatch(
+    terra::subset(data, c(truth, estimate)),
+    error = function(e) {
+      rlang::abort("Couldn't select either `truth` or `estimate`. Are your indices correct?")
+    }
+  )
+
+  if (terra::nlyr(data) != 2) {
+    rlang::abort(c(
+      "`terra::subset(data, c(truth, estimate))` didn't return 2 layers as expected.",
+      i = "Make sure `truth` and `estimate` both select exactly one layer."
+    ))
+  }
+  names(data) <- c("truth", "estimate")
+
+  metrics <- handle_metrics(metrics)
+  grid_list <- handle_grids(data, grids, autoexpand_grid, ...)
+
+  grid_list$grids <- purrr::map(
+    grid_list$grids,
+    function(grid) {
+      grid <- sf::st_as_sf(grid)
+      sf::st_geometry(grid) <- "geometry"
+      if (rlang::is_function(aggregation_function) || aggregation_function == "count") {
+        grid <- cbind(
+          grid,
+          stats::setNames(
+            exactextractr::exact_extract(
+              data,
+              grid,
+              fun = aggregation_function,
+              progress = progress
+            ),
+            c(".truth", ".estimate")
+          )
+        )
+        grid[c(".truth", ".estimate", "geometry")]
+      } else {
+        grid_df <- exactextractr::exact_extract(
+          data,
+          grid,
+          fun = c(aggregation_function, "count"),
+          progress = progress
+        )
+        names(grid_df) <- c(".truth", ".estimate", ".truth_count", ".estimate_count")
+
+        cbind(grid, grid_df)[c(
+          ".truth",
+          ".truth_count",
+          ".estimate",
+          ".estimate_count",
+          "geometry"
+        )]
+      }
+    }
+  )
+
+  .notes <- raster_method_notes(grid_list)
+
+  raster_method_summary(grid_list, .notes, metrics, na_rm)
+}
+
+ww_multi_scale_raster_args <- function(
     data = NULL,
     truth,
     estimate,
@@ -212,7 +312,13 @@ ww_multi_scale.SpatRaster <- function(
     }
   )
 
-  .notes <- purrr::map(
+  .notes <- raster_method_notes(grid_list)
+
+  raster_method_summary(grid_list, .notes, metrics, na_rm)
+}
+
+raster_method_notes <- function(grid_list) {
+  purrr::map(
     seq_along(grid_list$grids),
     function(idx) {
       tibble::tibble(
@@ -221,7 +327,9 @@ ww_multi_scale.SpatRaster <- function(
       )
     }
   )
+}
 
+raster_method_summary <- function(grid_list, .notes, metrics, na_rm) {
   purrr::pmap_dfr(
     list(
       grid = grid_list$grids,
@@ -282,21 +390,36 @@ ww_multi_scale.sf <- function(
 
   grid_list <- handle_grids(data, grids, autoexpand_grid, ...)
 
-  grid_list$grid_intersections <- purrr::map(
+  data$.grid_idx <- seq_len(nrow(data))
+  out <- purrr::map2_dfr(
     grid_list$grids,
-    function(grid) {
-      out <- sf::st_intersects(grid, data)
-      out[purrr::map_lgl(out, function(x) !identical(x, integer(0)))]
-    }
-  )
+    grid_list$grid_arg_idx,
+    function(grid, grid_args_idx) {
+      grid_args <- grid_list[["grid_args"]][grid_args_idx, ]
 
-  .notes <- purrr::map(
-    grid_list$grid_intersections,
-    function(idx) {
-      missing <- setdiff(seq_len(nrow(data)), unlist(idx))
+      grid <- sf::st_as_sf(grid)
 
+      data_crs <- sf::st_crs(data)
+      grid_crs <- sf::st_crs(grid)
+      # If both have a CRS, reproject
+      if (!is.na(data_crs) && !is.na(grid_crs)) {
+        grid <- sf::st_transform(grid, data_crs)
+        # if only data has CRS, assume grid in same
+      } else if (!is.na(data_crs)) {
+        grid <- sf::st_set_crs(grid, data_crs)
+      }
+      # if neither has a CRS, ignore (so, implicitly assume grid is in same)
+
+      grid$grid_cell_idx <- seq_len(nrow(grid))
+      grid_matches <- sf::st_join(
+        grid,
+        data[".grid_idx"],
+        left = FALSE
+      )
+      grid_matches <- sf::st_drop_geometry(grid_matches)
+
+      missing <- setdiff(data[[".grid_idx"]], grid_matches[[".grid_idx"]])
       note <- character(0)
-
       if (length(missing) > 0) {
         note <- "Some observations were not within any grid cell, and as such were not used in any assessments. Their row numbers are in the `missing_indices` column."
         missing <- list(missing)
@@ -304,14 +427,53 @@ ww_multi_scale.sf <- function(
         missing <- list()
       }
 
-      tibble::tibble(
+      notes_tibble <- tibble::tibble(
         note = note,
         missing_indices = missing
       )
+
+      matched_data <- dplyr::left_join(
+        data,
+        grid_matches,
+        by = dplyr::join_by(.grid_idx)
+      )
+      matched_data <- sf::st_drop_geometry(matched_data)
+      matched_data <- matched_data[!is.na(matched_data[["grid_cell_idx"]]), ]
+      matched_data <- dplyr::group_by(
+        matched_data,
+        dplyr::across(dplyr::all_of(c(dplyr::group_vars(data), "grid_cell_idx")))
+      )
+      matched_data <- dplyr::summarise(
+        matched_data,
+        .truth = rlang::exec(.env[["aggregation_function"]], {{ truth }}),
+        .truth_count = sum(!is.na({{ truth }})),
+        .estimate = rlang::exec(.env[["aggregation_function"]], {{ estimate }}),
+        .estimate_count = sum(!is.na({{ estimate }})),
+        .groups = "drop"
+      )
+
+      if (dplyr::is_grouped_df(data)) {
+        matched_data <- dplyr::group_by(matched_data, !!!dplyr::groups(data))
+      }
+
+      out <- metrics(matched_data, .truth, .estimate, na_rm = na_rm)
+      out["grid_cell_idx"] <- NULL
+      out[attr(out, "sf_column")] <- NULL
+      out$.grid_args <- list(grid_args)
+      .grid <- dplyr::left_join(
+        grid,
+        matched_data,
+        by = dplyr::join_by(grid_cell_idx)
+      )
+      .grid["grid_cell_idx"] <- NULL
+      out$.grid <- list(.grid)
+      out$.notes <- list(notes_tibble)
+      out
+
     }
   )
 
-  if (any(purrr::map_lgl(.notes, function(x) nrow(x) > 0))) {
+  if (any(purrr::map_lgl(out[[".notes"]], function(x) nrow(x) > 0))) {
     rlang::warn(
       c(
         "Some observations were not within any grid cell, and as such were not used in any assessments.",
@@ -320,55 +482,8 @@ ww_multi_scale.sf <- function(
     )
   }
 
-  grid_list$grid_intersections <- purrr::map(
-    grid_list$grid_intersections,
-    function(idx_list) {
-      out <- purrr::map_dfr(
-        idx_list,
-        function(idx) {
-          dplyr::summarise(
-            data[idx, , drop = FALSE],
-            .truth = rlang::exec(.env[["aggregation_function"]], {{ truth }}),
-            .truth_count = sum(!is.na({{ truth }})),
-            .estimate = rlang::exec(.env[["aggregation_function"]], {{ estimate }}),
-            .estimate_count = sum(!is.na({{ estimate }})),
-            .groups = "keep"
-          )
-        }
-      )
+  out
 
-      if (dplyr::is_grouped_df(data)) {
-        dplyr::group_by(out, !!!dplyr::groups(data))
-      } else {
-        out
-      }
-    }
-  )
-
-  purrr::pmap_dfr(
-    list(
-      dat = grid_list$grid_intersections,
-      grid = grid_list$grids,
-      grid_arg = grid_list$grid_arg_idx,
-      .notes = .notes
-    ),
-    function(dat, grid, grid_arg, .notes) {
-      out <- metrics(dat, .truth, .estimate, na_rm = na_rm)
-      out[attr(out, "sf_column")] <- NULL
-      out$.grid_args <- list(grid_list$grid_args[grid_arg, ])
-      out$.grid <- list(
-        suppressMessages( # We want to ignore a "names repair" message here
-          sf::st_join(
-            sf::st_as_sf(grid),
-            dat,
-            sf::st_contains
-          )
-        )
-      )
-      out$.notes <- list(.notes)
-      out
-    }
-  )
 }
 
 handle_metrics <- function(metrics) {

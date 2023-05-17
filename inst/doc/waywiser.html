@@ -12,7 +12,7 @@
 
 
 
-<title>Assessing Models with Waywiser</title>
+<title>Assessing models with waywiser</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -336,7 +336,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Assessing Models with Waywiser</h1>
+<h1 class="title toc-ignore">Assessing models with waywiser</h1>
 
 
 
@@ -499,12 +499,11 @@ running <code>n[[1]]</code> returns <code>c(2, 4)</code>:</p>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">list</span>(ww_agreement_coefficient, yardstick<span class="sc">::</span>rmse),</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>))</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 7</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .metric      .esti…¹ .esti…²                  geometry .grid_…³ .grid .notes  </span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt;     &lt;dbl&gt;          &lt;MULTIPOINT [°]&gt; &lt;list&gt;   &lt;lis&gt; &lt;list&gt;  </span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 agreement_c… standa…  0.202                      EMPTY &lt;tibble&gt; &lt;sf&gt;  &lt;tibble&gt;</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 rmse         standa…  0.0391 ((-42.42282 -18.98316), … &lt;tibble&gt; &lt;sf&gt;  &lt;tibble&gt;</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with abbreviated variable names ¹​.estimator, ²​.estimate, ³​.grid_args</span></span></code></pre></div>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 6</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .metric               .estimator .estimate .grid_args       .grid  .notes  </span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;                 &lt;chr&gt;          &lt;dbl&gt; &lt;list&gt;           &lt;list&gt; &lt;list&gt;  </span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 agreement_coefficient standard      0.202  &lt;tibble [1 × 1]&gt; &lt;sf&gt;   &lt;tibble&gt;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 rmse                  standard      0.0391 &lt;tibble [1 × 1]&gt; &lt;sf&gt;   &lt;tibble&gt;</span></span></code></pre></div>
 <p>You can also pass polygons directly, if you have pre-defined grids
 you’d like to use:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_make_grid</span>(worldclim_testing, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>))</span>
@@ -517,12 +516,11 @@ you’d like to use:</p>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Some observations were not within any grid cell, and as such were not used in any assessments.</span></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ See the `.notes` column for details.</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 7</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .metric      .esti…¹ .esti…²                  geometry .grid_…³ .grid .notes  </span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt;     &lt;dbl&gt;          &lt;MULTIPOINT [°]&gt; &lt;list&gt;   &lt;lis&gt; &lt;list&gt;  </span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 agreement_c… standa…  0.150                      EMPTY &lt;tibble&gt; &lt;sf&gt;  &lt;tibble&gt;</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 rmse         standa…  0.0418 ((-42.42282 -18.98316), … &lt;tibble&gt; &lt;sf&gt;  &lt;tibble&gt;</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with abbreviated variable names ¹​.estimator, ²​.estimate, ³​.grid_args</span></span></code></pre></div>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 6</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .metric               .estimator .estimate .grid_args       .grid  .notes  </span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;                 &lt;chr&gt;          &lt;dbl&gt; &lt;list&gt;           &lt;list&gt; &lt;list&gt;  </span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 agreement_coefficient standard      0.150  &lt;tibble [0 × 0]&gt; &lt;sf&gt;   &lt;tibble&gt;</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 rmse                  standard      0.0418 &lt;tibble [0 × 0]&gt; &lt;sf&gt;   &lt;tibble&gt;</span></span></code></pre></div>
 </div>
 <div id="area-of-applicability" class="section level2">
 <h2>Area of Applicability</h2>

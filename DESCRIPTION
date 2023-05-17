@@ -1,7 +1,7 @@
 Type: Package
 Package: waywiser
 Title: Ergonomic Methods for Assessing Spatial Models
-Version: 0.3.0
+Version: 0.4.0
 Authors@R: c(
     person("Michael", "Mahoney", , "mike.mahoney.218@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2402-304X")),
@@ -40,8 +40,8 @@ URL: https://github.com/ropensci/waywiser,
 BugReports: https://github.com/ropensci/waywiser/issues
 Depends: R (>= 4.0)
 Imports: dplyr (>= 1.1.0), fields, FNN, glue, hardhat, Matrix, purrr,
-        rlang, sf (>= 1.0-0), spdep (>= 1.1-9), stats, tibble,
-        tidyselect, yardstick
+        rlang (>= 1.1.0), sf (>= 1.0-0), spdep (>= 1.1-9), stats,
+        tibble, tidyselect, vctrs, yardstick (>= 1.2.0)
 Suggests: applicable, caret, CAST, covr, exactextractr, ggplot2, knitr,
         modeldata, recipes, rmarkdown, rsample, spatialsample, terra,
         testthat (>= 3.0.0), tidymodels, tidyr, tigris, vip, whisker,
@@ -55,7 +55,7 @@ Language: en-US
 LazyData: true
 RoxygenNote: 7.2.3
 NeedsCompilation: no
-Packaged: 2023-03-19 22:28:23 UTC; mikemahoney218
+Packaged: 2023-05-17 15:42:37 UTC; mikemahoney218
 Author: Michael Mahoney [aut, cre] (<https://orcid.org/0000-0003-2402-304X>),
   Lucas Johnson [ctb] (<https://orcid.org/0000-0002-7953-0260>),
   Virgilio Gómez-Rubio [rev] (Virgilio reviewed the package (v.
@@ -67,4 +67,4 @@ Author: Michael Mahoney [aut, cre] (<https://orcid.org/0000-0003-2402-304X>),
   Posit Software, PBC [cph, fnd]
 Maintainer: Michael Mahoney <mike.mahoney.218@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-03-19 22:50:02 UTC
+Date/Publication: 2023-05-17 16:10:02 UTC

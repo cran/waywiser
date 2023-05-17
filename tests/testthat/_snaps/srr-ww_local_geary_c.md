@@ -3,33 +3,33 @@
     Code
       ww_local_geary_c_vec(worldclim_predicted$response, tail(worldclim_predicted$
         predicted, -1), worldclim_weights)
-    Error <rlang_error>
-      Length of `truth` (10000) and `estimate` (9999) must match.
+    Condition
+      Error in `yardstick_vec()`:
+      ! Length of `truth` (10000) and `estimate` (9999) must match.
 
 ---
 
     Code
       ww_local_geary_c_vec(tail(worldclim_predicted$response, -1),
       worldclim_predicted$predicted, worldclim_weights)
-    Error <rlang_error>
-      Length of `truth` (9999) and `estimate` (10000) must match.
+    Condition
+      Error in `yardstick_vec()`:
+      ! Length of `truth` (9999) and `estimate` (10000) must match.
 
 ---
 
     Code
       ww_local_geary_c(worldclim_predicted, predicted, response)
-    Error <rlang_error>
-      i In argument: `.estimate = fn(...)`.
-      Caused by error in `yardstick_vec()`:
+    Condition
+      Error in `ww_local_geary_c()`:
       ! `truth` must be numeric.
 
 ---
 
     Code
       ww_local_geary_c(worldclim_predicted, response, predicted)
-    Error <rlang_error>
-      i In argument: `.estimate = fn(...)`.
-      Caused by error in `yardstick_vec()`:
+    Condition
+      Error in `ww_local_geary_c()`:
       ! `estimate` must be numeric.
 
 ---
@@ -37,49 +37,51 @@
     Code
       ww_local_geary_c_vec(worldclim_predicted$response, worldclim_predicted$
       predicted, worldclim_weights)
-    Error <rlang_error>
-      `estimate` must be numeric.
+    Condition
+      Error in `yardstick_vec()`:
+      ! `estimate` must be numeric.
 
 ---
 
     Code
       ww_local_geary_c_vec(worldclim_predicted$predicted, worldclim_predicted$
       response, worldclim_weights)
-    Error <rlang_error>
-      `truth` must be numeric.
+    Condition
+      Error in `yardstick_vec()`:
+      ! `truth` must be numeric.
 
 ---
 
     Code
       ww_local_geary_c(worldclim_predicted, response, predicted)
-    Error <rlang_error>
-      i In argument: `.estimate = fn(...)`.
-      Caused by error in `yardstick_vec()`:
+    Condition
+      Error in `ww_local_geary_c()`:
       ! `estimate` must be numeric.
 
 ---
 
     Code
       ww_local_geary_c(worldclim_predicted, predicted, response)
-    Error <rlang_error>
-      i In argument: `.estimate = fn(...)`.
-      Caused by error in `yardstick_vec()`:
+    Condition
+      Error in `ww_local_geary_c()`:
       ! `truth` must be numeric.
 
 ---
 
     Code
       ww_local_geary_c(worldclim_predicted, predicted, response)$.estimate
-    Error <rlang_error>
-      Missing values in data.
+    Condition
+      Error in `spatial_yardstick_df()`:
+      ! Missing values in data.
       i waywiser can't handle missing data for functions that use spatial weights.
 
 ---
 
     Code
       ww_local_geary_c(worldclim_predicted, response, predicted)$.estimate
-    Error <rlang_error>
-      Missing values in data.
+    Condition
+      Error in `spatial_yardstick_df()`:
+      ! Missing values in data.
       i waywiser can't handle missing data for functions that use spatial weights.
 
 ---
@@ -87,8 +89,9 @@
     Code
       ww_local_geary_c_vec(worldclim_predicted$predicted, worldclim_predicted$
       response, worldclim_weights)
-    Error <rlang_error>
-      Missing values in data.
+    Condition
+      Error in `spatial_yardstick_vec()`:
+      ! Missing values in data.
       i waywiser can't handle missing data for functions that use spatial weights.
 
 ---
@@ -96,25 +99,26 @@
     Code
       ww_local_geary_c_vec(worldclim_predicted$response, worldclim_predicted$
       predicted, worldclim_weights)
-    Error <rlang_error>
-      Missing values in data.
+    Condition
+      Error in `spatial_yardstick_vec()`:
+      ! Missing values in data.
       i waywiser can't handle missing data for functions that use spatial weights.
 
 ---
 
     Code
       ww_local_geary_c_vec(numeric(), numeric(), structure(list(), class = "listw"))
-    Error <rlang_error>
-      0 non-missing values were passed to `truth`.
+    Condition
+      Error in `yardstick_vec()`:
+      ! 0 non-missing values were passed to `truth`.
 
 ---
 
     Code
       ww_local_geary_c(head(worldclim_predicted, 0), response, predicted, structure(
         list(), class = "listw"))
-    Error <rlang_error>
-      i In argument: `.estimate = fn(...)`.
-      Caused by error in `yardstick_vec()`:
+    Condition
+      Error in `ww_local_geary_c()`:
       ! 0 non-missing values were passed to `truth`.
 
 ---
@@ -122,33 +126,35 @@
     Code
       ww_local_geary_c(head(worldclim_predicted, 0), predicted, response, structure(
         list(), class = "listw"))
-    Error <rlang_error>
-      i In argument: `.estimate = fn(...)`.
-      Caused by error in `yardstick_vec()`:
+    Condition
+      Error in `ww_local_geary_c()`:
       ! 0 non-missing values were passed to `truth`.
 
 ---
 
     Code
       ww_local_geary_c_vec(NA_real_, NA_real_, structure(list(neighbours = 1), class = "listw"))
-    Error <rlang_error>
-      Missing values in data.
+    Condition
+      Error in `spatial_yardstick_vec()`:
+      ! Missing values in data.
       i waywiser can't handle missing data for functions that use spatial weights.
 
 ---
 
     Code
       ww_local_geary_c(worldclim_predicted, response, predicted)$.estimate
-    Error <rlang_error>
-      Missing values in data.
+    Condition
+      Error in `spatial_yardstick_df()`:
+      ! Missing values in data.
       i waywiser can't handle missing data for functions that use spatial weights.
 
 ---
 
     Code
       ww_local_geary_c(worldclim_predicted, predicted, response)$.estimate
-    Error <rlang_error>
-      Missing values in data.
+    Condition
+      Error in `spatial_yardstick_df()`:
+      ! Missing values in data.
       i waywiser can't handle missing data for functions that use spatial weights.
 
 ---
@@ -732,7 +738,7 @@
        8 local_geary_c standard         NaN
        9 local_geary_c standard         NaN
       10 local_geary_c standard         NaN
-      # ... with 9,990 more rows
+      # i 9,990 more rows
 
 # other generic srr standards
 
@@ -752,7 +758,7 @@
        8 local_geary_c standard    0.000282 
        9 local_geary_c standard    0.00704  
       10 local_geary_c standard    0.00451  
-      # ... with 9,990 more rows
+      # i 9,990 more rows
 
 ---
 
@@ -772,7 +778,7 @@
        8 local_geary_c standard    0.000282 
        9 local_geary_c standard    0.00704  
       10 local_geary_c standard    0.00451  
-      # ... with 9,990 more rows
+      # i 9,990 more rows
 
 ---
 
@@ -4806,7 +4812,7 @@
        8 local_geary_c standard    0.000282 
        9 local_geary_c standard    0.00704  
       10 local_geary_c standard    0.00451  
-      # ... with 9,990 more rows
+      # i 9,990 more rows
 
 ---
 
@@ -4827,7 +4833,7 @@
        8 local_geary_c standard    0.000939
        9 local_geary_c standard    0.00201 
       10 local_geary_c standard    0.0195  
-      # ... with 9,990 more rows
+      # i 9,990 more rows
 
 ---
 

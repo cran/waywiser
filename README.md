@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![arXiv
+preprint](https://img.shields.io/badge/arXiv-2303.11312-brightgreen)](https://arxiv.org/abs/2303.11312)
 [![R-CMD-check](https://github.com/ropensci/waywiser/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/waywiser/actions/workflows/R-CMD-check.yaml)
 [![License:
 MIT](https://img.shields.io/badge/license-MIT-green)](https://choosealicense.com/licenses/mit/)
@@ -126,7 +128,7 @@ ww_local_moran_i(guerry_predicted, Crm_prs, predictions)
 #>  8 local_moran_i standard      1.79  
 #>  9 local_moran_i standard      0.0208
 #> 10 local_moran_i standard      0.750 
-#> # … with 75 more rows
+#> # ℹ 75 more rows
 ```
 
 More information about multi-scale assessment is included in
@@ -145,6 +147,7 @@ crime_model_aoa <- ww_area_of_applicability(
   importance = vip::vi_model(crime_model)
 )
 #> Warning: The AOA threshold was 0, which is usually unexpected.
+#> ℹ Did you accidentally pass the same data as testing and training?
 
 guerry_aoa <- cbind(
   guerry,
@@ -167,22 +170,26 @@ website!](https://docs.ropensci.org/waywiser/)
 
 To cite waywiser in publications please use:
 
-> Mahoney, M. J. (2022). waywiser: Ergonomic Methods for Assessing
-> Spatial Models. R package version 0.2.0,
-> <https://CRAN.R-project.org/package=waywiser>.
+Mahoney M. J. (2023). waywiser: Ergonomic Methods for Assessing Spatial
+Models. arXiv:2303.11312 \[cs.MS\].
+<https://doi.org/10.48550/arXiv.2303.11312>
 
 A BibTeX entry for LaTeX users is
 
 ``` bibtex
-
-  @Manual{,
-    title = {{waywiser}: Ergonomic Methods for Assessing Spatial Models},
-    author = {Michael Mahoney},
-    year = 2022,
-    note = {R package version 0.2.0},
-    url = {https://CRAN.R-project.org/package=waywiser},
+  @Misc{,
+    title = {waywiser: Ergonomic Methods for Assessing Spatial Models},
+    author = {Michael J Mahoney},
+    year = {2023},
+    eprint = {2303.11312},
+    archiveprefix = {arXiv},
+    primaryclass = {cs.MS},
+    doi = {10.48550/arXiv.2303.11312},
+    url = {https://arxiv.org/abs/2303.11312},
   }
 ```
+
+See `citation("waywiser")` for the most up-to-date citation information.
 
 ## Contributing
 
@@ -197,3 +204,5 @@ project, you agree to abide by its terms.
   [reprex](https://reprex.tidyverse.org/articles/articles/learn-reprex.html)
   (a minimal, reproducible example) to clearly communicate about your
   code.
+
+[![ropensci_footer](https://ropensci.org/public_images/github_footer.png)](https://ropensci.org)
