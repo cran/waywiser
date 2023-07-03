@@ -27,31 +27,46 @@ document.addEventListener('DOMContentLoaded', function(e) {
   }
 });
 </script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
 
 <style type="text/css">
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-ul.task-list{list-style: none;}
-</style>
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 
 <style type="text/css">
-code {
-white-space: pre;
-}
-.sourceCode {
-overflow: visible;
-}
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -63,54 +78,55 @@ pre > code.sourceCode { white-space: pre-wrap; }
 pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-{ counter-reset: source-line 0; }
+  { counter-reset: source-line 0; }
 pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
+  { position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-color: #aaaaaa;
-}
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-{ }
+  {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -340,256 +356,189 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<p>The waywiser package aims to be an ergonomic toolbox providing a
-consistent user interface for assessing spatial models. To that end,
-waywiser does three main things:</p>
+<p>The waywiser package aims to be an ergonomic toolbox providing a consistent user interface for assessing spatial models. To that end, waywiser does three main things:</p>
 <ol style="list-style-type: decimal">
-<li>Provides new <a href="https://yardstick.tidymodels.org/">yardstick</a> extensions,
-making it easier to use performance metrics from the spatial modeling
-literature via a standardized API.</li>
-<li>Provides a new function, <code>ww_multi_scale()</code>, which makes
-it easy to see how model performance metrics change when predictions are
-aggregated to various scales.</li>
-<li>Provides an implementation of the <a href="https://doi.org/10.1111/2041-210X.13650">area of applicability
-from Meyer and Pebesma 2021</a>, extending this tool to work with
-tidymodels infrastructure.</li>
+<li>Provides new <a href="https://yardstick.tidymodels.org/">yardstick</a> extensions, making it easier to use performance metrics from the spatial modeling literature via a standardized API.</li>
+<li>Provides a new function, <code>ww_multi_scale()</code>, which makes it easy to see how model performance metrics change when predictions are aggregated to various scales.</li>
+<li>Provides an implementation of the <a href="https://doi.org/10.1111/2041-210X.13650">area of applicability from Meyer and Pebesma 2021</a>, extending this tool to work with tidymodels infrastructure.</li>
 </ol>
-<p>This vignette will walk through each of these goals in turn. Before
-we do that, let’s set up the data we’ll use in examples. We’ll be using
-simulated data based on <a href="https://www.worldclim.org/">Worldclim</a> variables; our
-predictors here represent temperature and precipitation values at
-sampled locations, while, our response represents a virtual species
-distribution:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(waywiser)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1107</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>worldclim_training <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(worldclim_simulation) <span class="sc">*</span> <span class="fl">0.8</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>worldclim_testing <span class="ot">&lt;-</span> worldclim_simulation[<span class="sc">-</span>worldclim_training, ]</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>worldclim_training <span class="ot">&lt;-</span> worldclim_simulation[worldclim_training, ]</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>worldclim_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  response <span class="sc">~</span> bio2 <span class="sc">+</span> bio10 <span class="sc">+</span> bio13 <span class="sc">+</span> bio19,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  worldclim_training</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>worldclim_testing<span class="sc">$</span>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  worldclim_model,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  worldclim_testing</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(worldclim_testing)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 6 features and 6 fields</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Geometry type: POINT</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Dimension:     XY</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bounding box:  xmin: -156.2436 ymin: 3.924933 xmax: 52.85843 ymax: 48.72934</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Geodetic CRS:  +proj=longlat +datum=WGS84 +no_defs</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      bio2 bio10 bio13 bio19                   geometry   response predictions</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8001  150   256    12    32   POINT (36.1216 30.23658) 0.65981755  0.60203146</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8002   85   248    82   196 POINT (-156.2436 19.73569) 0.30859908  0.30053636</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8003  178   275    56    33 POINT (-103.2796 31.85488) 0.47365646  0.65660673</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8004  100   200    74    99  POINT (20.64971 47.14207) 0.47266462  0.39658926</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8005   68   262   296   746 POINT (-81.33804 3.924933) 0.00863417 -0.01075431</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8006  112   241    21    48  POINT (52.85843 48.72934) 0.63255439  0.46702575</span></span></code></pre></div>
+<p>This vignette will walk through each of these goals in turn. Before we do that, let’s set up the data we’ll use in examples. We’ll be using simulated data based on <a href="https://www.worldclim.org/">Worldclim</a> variables; our predictors here represent temperature and precipitation values at sampled locations, while, our response represents a virtual species distribution:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(waywiser)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">set.seed</span>(<span class="dv">1107</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>worldclim_training &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">nrow</span>(worldclim_simulation) <span class="op">*</span><span class="st"> </span><span class="fl">0.8</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>worldclim_testing &lt;-<span class="st"> </span>worldclim_simulation[<span class="op">-</span>worldclim_training, ]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>worldclim_training &lt;-<span class="st"> </span>worldclim_simulation[worldclim_training, ]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>worldclim_model &lt;-<span class="st"> </span><span class="kw">lm</span>(</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>  response <span class="op">~</span><span class="st"> </span>bio2 <span class="op">+</span><span class="st"> </span>bio10 <span class="op">+</span><span class="st"> </span>bio13 <span class="op">+</span><span class="st"> </span>bio19,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>  worldclim_training</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a>worldclim_testing<span class="op">$</span>predictions &lt;-<span class="st"> </span><span class="kw">predict</span>(</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a>  worldclim_model,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a>  worldclim_testing</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a><span class="kw">head</span>(worldclim_testing)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a><span class="co">#&gt; Simple feature collection with 6 features and 6 fields</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true"></a><span class="co">#&gt; Geometry type: POINT</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true"></a><span class="co">#&gt; Bounding box:  xmin: -156.2436 ymin: 3.924933 xmax: 52.85843 ymax: 48.72934</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true"></a><span class="co">#&gt; Geodetic CRS:  +proj=longlat +datum=WGS84 +no_defs</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true"></a><span class="co">#&gt;      bio2 bio10 bio13 bio19                   geometry   response predictions</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true"></a><span class="co">#&gt; 8001  150   256    12    32   POINT (36.1216 30.23658) 0.65981755  0.60203146</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true"></a><span class="co">#&gt; 8002   85   248    82   196 POINT (-156.2436 19.73569) 0.30859908  0.30053636</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true"></a><span class="co">#&gt; 8003  178   275    56    33 POINT (-103.2796 31.85488) 0.47365646  0.65660673</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true"></a><span class="co">#&gt; 8004  100   200    74    99  POINT (20.64971 47.14207) 0.47266462  0.39658926</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true"></a><span class="co">#&gt; 8005   68   262   296   746 POINT (-81.33804 3.924933) 0.00863417 -0.01075431</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true"></a><span class="co">#&gt; 8006  112   241    21    48  POINT (52.85843 48.72934) 0.63255439  0.46702575</span></span></code></pre></div>
 <div id="yardstick-extensions" class="section level2">
 <h2>Yardstick Extensions</h2>
-<p>First and foremost, waywiser provides a host of new yardstick metrics
-to provide a standardized interface for various performance metrics.</p>
-<p>All of these functions work more or less the same way: you provide
-your data, the names of your “true” values and predicted values, and get
-back a standardized output format. As usual with yardstick, that output
-can either be a tibble or a vector output. For instance, if we want to
-calculate the agreement coefficient from <a href="https://doi.org/10.14358/PERS.72.7.823">Ji and Gallo 2006</a>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ww_agreement_coefficient</span>(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  worldclim_testing,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">truth =</span> response,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> predictions</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .metric               .estimator .estimate</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;                 &lt;chr&gt;          &lt;dbl&gt;</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 agreement_coefficient standard       0.675</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ww_agreement_coefficient_vec</span>(</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">truth =</span> worldclim_testing<span class="sc">$</span>response,</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> worldclim_testing<span class="sc">$</span>predictions</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.6753398</span></span></code></pre></div>
-<p>Some of these additional metrics are implemented by wrapping
-functions from the <a href="https://r-spatial.github.io/spdep/">spdep</a> package:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ww_global_geary_c</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  worldclim_testing,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">truth =</span> response,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> predictions</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .metric        .estimator .estimate</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;          &lt;chr&gt;          &lt;dbl&gt;</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 global_geary_c standard       0.166</span></span></code></pre></div>
-<p>These functions rely on calculating the spatial neighbors of each
-observation. The waywiser package will automatically use
-<code>ww_build_weights()</code> to calculate these, if not provided, but
-this is often not desirable. For that reason, these functions all have a
-<code>wt</code> argument, which can take either pre-calculated weights
-or a function that will create spatial weights:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ww_global_geary_c</span>(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  worldclim_testing,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">truth =</span> response,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> predictions,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">wt =</span> <span class="fu">ww_build_weights</span>(worldclim_testing)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .metric        .estimator .estimate</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;          &lt;chr&gt;          &lt;dbl&gt;</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 global_geary_c standard       0.166</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ww_global_geary_c</span>(</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  worldclim_testing,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">truth =</span> response,</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> predictions,</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">wt =</span> ww_build_weights</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .metric        .estimator .estimate</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;          &lt;chr&gt;          &lt;dbl&gt;</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 global_geary_c standard       0.166</span></span></code></pre></div>
-<p>Because these are yardstick metrics, they can be used with
-<code>yardstick::metric_set()</code> and other tidymodels
-infrastructure:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>yardstick<span class="sc">::</span><span class="fu">metric_set</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  ww_agreement_coefficient,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  ww_global_geary_c</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)(worldclim_testing,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">truth =</span> response,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> predictions)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 3</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .metric               .estimator .estimate</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;                 &lt;chr&gt;          &lt;dbl&gt;</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 agreement_coefficient standard       0.675</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 global_geary_c        standard       0.166</span></span></code></pre></div>
+<p>First and foremost, waywiser provides a host of new yardstick metrics to provide a standardized interface for various performance metrics.</p>
+<p>All of these functions work more or less the same way: you provide your data, the names of your “true” values and predicted values, and get back a standardized output format. As usual with yardstick, that output can either be a tibble or a vector output. For instance, if we want to calculate the agreement coefficient from <a href="https://doi.org/10.14358/PERS.72.7.823">Ji and Gallo 2006</a>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">ww_agreement_coefficient</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>  worldclim_testing,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>  <span class="dt">truth =</span> response,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>  <span class="dt">estimate =</span> predictions</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a><span class="co">#&gt;   .metric               .estimator .estimate</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;                 &lt;chr&gt;          &lt;dbl&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a><span class="co">#&gt; 1 agreement_coefficient standard       0.675</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a><span class="kw">ww_agreement_coefficient_vec</span>(</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>  <span class="dt">truth =</span> worldclim_testing<span class="op">$</span>response,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>  <span class="dt">estimate =</span> worldclim_testing<span class="op">$</span>predictions</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a><span class="co">#&gt; [1] 0.6753398</span></span></code></pre></div>
+<p>Some of these additional metrics are implemented by wrapping functions from the <a href="https://r-spatial.github.io/spdep/">spdep</a> package:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">ww_global_geary_c</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>  worldclim_testing,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  <span class="dt">truth =</span> response,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>  <span class="dt">estimate =</span> predictions</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a><span class="co">#&gt;   .metric        .estimator .estimate</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;          &lt;chr&gt;          &lt;dbl&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a><span class="co">#&gt; 1 global_geary_c standard       0.166</span></span></code></pre></div>
+<p>These functions rely on calculating the spatial neighbors of each observation. The waywiser package will automatically use <code>ww_build_weights()</code> to calculate these, if not provided, but this is often not desirable. For that reason, these functions all have a <code>wt</code> argument, which can take either pre-calculated weights or a function that will create spatial weights:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">ww_global_geary_c</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>  worldclim_testing,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>  <span class="dt">truth =</span> response,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>  <span class="dt">estimate =</span> predictions,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>  <span class="dt">wt =</span> <span class="kw">ww_build_weights</span>(worldclim_testing)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a><span class="co">#&gt;   .metric        .estimator .estimate</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;          &lt;chr&gt;          &lt;dbl&gt;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a><span class="co">#&gt; 1 global_geary_c standard       0.166</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a><span class="kw">ww_global_geary_c</span>(</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true"></a>  worldclim_testing,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true"></a>  <span class="dt">truth =</span> response,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true"></a>  <span class="dt">estimate =</span> predictions,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true"></a>  <span class="dt">wt =</span> ww_build_weights</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true"></a>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true"></a><span class="co">#&gt;   .metric        .estimator .estimate</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;          &lt;chr&gt;          &lt;dbl&gt;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true"></a><span class="co">#&gt; 1 global_geary_c standard       0.166</span></span></code></pre></div>
+<p>Because these are yardstick metrics, they can be used with <code>yardstick::metric_set()</code> and other tidymodels infrastructure:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>yardstick<span class="op">::</span><span class="kw">metric_set</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>  ww_agreement_coefficient,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>  ww_global_geary_c</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>)(worldclim_testing,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>  <span class="dt">truth =</span> response,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>  <span class="dt">estimate =</span> predictions)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 2 × 3</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a><span class="co">#&gt;   .metric               .estimator .estimate</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;                 &lt;chr&gt;          &lt;dbl&gt;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a><span class="co">#&gt; 1 agreement_coefficient standard       0.675</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a><span class="co">#&gt; 2 global_geary_c        standard       0.166</span></span></code></pre></div>
 </div>
 <div id="multi-scale-model-assessment" class="section level2">
 <h2>Multi-scale model assessment</h2>
-<p>A common pattern with spatial models is that you need to predict
-observation units – pixels of a raster or individual points – which will
-be aggregated to arbitrary scales, such as towns or parcel boundaries.
-Because errors can be spatially distributed, or can either compound or
-counteract each other when aggregated, <a href="https://doi.org/10.1016/j.rse.2010.05.010">some assessment
-protocols</a> recommend assessing model predictions aggregated to
-multiple scales.</p>
-<p>The <code>ww_multi_scale()</code> function helps automate this
-process. The interface for this function works similarly to that for
-yardstick metrics – you provide your data, your true values, and your
-estimate – except you also must provide instructions for how to
-aggregate your data. You can do this by passing arguments that will be
-used by <code>sf::st_make_grid()</code>; for instance, we can use the
-<code>n</code> argument to control how many polygons our grid has in the
-x and y directions.</p>
-<p>Note that each element of argument vector is used to make a separate
-grid – so, for instance, passing <code>n = c(2, 4)</code> will result in
-one 2-by-2 grid and one 4-by-4 grid, because <code>n[[1]]</code> is 2
-and <code>n[[2]]</code> is 4. If we actually wanted to create a 2-by-4
-grid, by passing <code>sf::st_make_grid()</code> the argument
-<code>n = c(2, 4)</code>, we need to wrap that vector in a list so that
-running <code>n[[1]]</code> returns <code>c(2, 4)</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ww_multi_scale</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  worldclim_testing,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">truth =</span> response,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> predictions,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">list</span>(ww_agreement_coefficient, yardstick<span class="sc">::</span>rmse),</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>))</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 6</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .metric               .estimator .estimate .grid_args       .grid  .notes  </span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;                 &lt;chr&gt;          &lt;dbl&gt; &lt;list&gt;           &lt;list&gt; &lt;list&gt;  </span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 agreement_coefficient standard      0.202  &lt;tibble [1 × 1]&gt; &lt;sf&gt;   &lt;tibble&gt;</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 rmse                  standard      0.0391 &lt;tibble [1 × 1]&gt; &lt;sf&gt;   &lt;tibble&gt;</span></span></code></pre></div>
-<p>You can also pass polygons directly, if you have pre-defined grids
-you’d like to use:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_make_grid</span>(worldclim_testing, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>))</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ww_multi_scale</span>(</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  worldclim_testing,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">truth =</span> response,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> predictions,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">list</span>(ww_agreement_coefficient, yardstick<span class="sc">::</span>rmse),</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">grids =</span> <span class="fu">list</span>(grid)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Some observations were not within any grid cell, and as such were not used in any assessments.</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ See the `.notes` column for details.</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 6</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .metric               .estimator .estimate .grid_args       .grid  .notes  </span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;                 &lt;chr&gt;          &lt;dbl&gt; &lt;list&gt;           &lt;list&gt; &lt;list&gt;  </span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 agreement_coefficient standard      0.150  &lt;tibble [0 × 0]&gt; &lt;sf&gt;   &lt;tibble&gt;</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 rmse                  standard      0.0418 &lt;tibble [0 × 0]&gt; &lt;sf&gt;   &lt;tibble&gt;</span></span></code></pre></div>
+<p>A common pattern with spatial models is that you need to predict observation units – pixels of a raster or individual points – which will be aggregated to arbitrary scales, such as towns or parcel boundaries. Because errors can be spatially distributed, or can either compound or counteract each other when aggregated, <a href="https://doi.org/10.1016/j.rse.2010.05.010">some assessment protocols</a> recommend assessing model predictions aggregated to multiple scales.</p>
+<p>The <code>ww_multi_scale()</code> function helps automate this process. The interface for this function works similarly to that for yardstick metrics – you provide your data, your true values, and your estimate – except you also must provide instructions for how to aggregate your data. You can do this by passing arguments that will be used by <code>sf::st_make_grid()</code>; for instance, we can use the <code>n</code> argument to control how many polygons our grid has in the x and y directions.</p>
+<p>Note that each element of argument vector is used to make a separate grid – so, for instance, passing <code>n = c(2, 4)</code> will result in one 2-by-2 grid and one 4-by-4 grid, because <code>n[[1]]</code> is 2 and <code>n[[2]]</code> is 4. If we actually wanted to create a 2-by-4 grid, by passing <code>sf::st_make_grid()</code> the argument <code>n = c(2, 4)</code>, we need to wrap that vector in a list so that running <code>n[[1]]</code> returns <code>c(2, 4)</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="kw">ww_multi_scale</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>  worldclim_testing,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>  <span class="dt">truth =</span> response,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>  <span class="dt">estimate =</span> predictions,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>  <span class="dt">metrics =</span> <span class="kw">list</span>(ww_agreement_coefficient, yardstick<span class="op">::</span>rmse),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>  <span class="dt">n =</span> <span class="kw">list</span>(<span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">4</span>))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 2 × 6</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a><span class="co">#&gt;   .metric               .estimator .estimate .grid_args       .grid  .notes  </span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;                 &lt;chr&gt;          &lt;dbl&gt; &lt;list&gt;           &lt;list&gt; &lt;list&gt;  </span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a><span class="co">#&gt; 1 agreement_coefficient standard      0.202  &lt;tibble [1 × 1]&gt; &lt;sf&gt;   &lt;tibble&gt;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a><span class="co">#&gt; 2 rmse                  standard      0.0391 &lt;tibble [1 × 1]&gt; &lt;sf&gt;   &lt;tibble&gt;</span></span></code></pre></div>
+<p>You can also pass polygons directly, if you have pre-defined grids you’d like to use:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>grid &lt;-<span class="st"> </span>sf<span class="op">::</span><span class="kw">st_make_grid</span>(worldclim_testing, <span class="dt">n =</span> <span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">4</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="kw">ww_multi_scale</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a>  worldclim_testing,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a>  <span class="dt">truth =</span> response,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a>  <span class="dt">estimate =</span> predictions,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a>  <span class="dt">metrics =</span> <span class="kw">list</span>(ww_agreement_coefficient, yardstick<span class="op">::</span>rmse),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a>  <span class="dt">grids =</span> <span class="kw">list</span>(grid)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a><span class="co">#&gt; Warning: Some observations were not within any grid cell, and as such were not used in any assessments.</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a><span class="co">#&gt; ℹ See the `.notes` column for details.</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 2 × 6</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true"></a><span class="co">#&gt;   .metric               .estimator .estimate .grid_args       .grid  .notes  </span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;                 &lt;chr&gt;          &lt;dbl&gt; &lt;list&gt;           &lt;list&gt; &lt;list&gt;  </span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true"></a><span class="co">#&gt; 1 agreement_coefficient standard      0.150  &lt;tibble [0 × 0]&gt; &lt;sf&gt;   &lt;tibble&gt;</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true"></a><span class="co">#&gt; 2 rmse                  standard      0.0418 &lt;tibble [0 × 0]&gt; &lt;sf&gt;   &lt;tibble&gt;</span></span></code></pre></div>
 </div>
 <div id="area-of-applicability" class="section level2">
 <h2>Area of Applicability</h2>
-<p>Last but not least, we can also see if there’s any areas in our data
-that are too different from our training data for us to safely predict
-on, which fall outside the “area of applicability” defined by <a href="https://doi.org/10.1111/2041-210X.13650">Meyer and Pebesma
-(2021)</a>. This approach looks at how similar the predictor values of
-new data are to the data you used to train your data, with each
-predictor weighted by how important it is to your model.</p>
-<p>In order to calculate your area of applicability, you can pass
-<code>ww_area_of_applicability()</code> information about which of your
-variables are used as predictors in your model, your training data, and
-the importance scores for each of your variables. Out of the box,
-waywiser should work with any of the importance score-calculating
-functions from the vip package:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>worldclim_aoa <span class="ot">&lt;-</span> <span class="fu">ww_area_of_applicability</span>(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  response <span class="sc">~</span> bio2 <span class="sc">+</span> bio10 <span class="sc">+</span> bio13 <span class="sc">+</span> bio19,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  worldclim_training,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">importance =</span> vip<span class="sc">::</span><span class="fu">vi_model</span>(worldclim_model)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>worldclim_aoa</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Predictors:</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    4</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Area-of-applicability threshold:</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    0.1038107</span></span></code></pre></div>
-<p>You can also pass a data.frame with columns named “term” and
-“estimate” (containing the name of each term, or predictor, and their
-estimated importance) rather than using the vip package if that’s more
-convenient.</p>
-<p>The objects returned by <code>ww_area_of_applicability()</code> are
-models in their own right, which can be used by functions such as
-<code>predict()</code> to calculate if new observations are in the area
-of applicability of a model.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>worldclim_testing <span class="ot">&lt;-</span> <span class="fu">cbind</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  worldclim_testing,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">predict</span>(worldclim_aoa, worldclim_testing)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(worldclim_testing)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 6 features and 8 fields</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Geometry type: POINT</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Dimension:     XY</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bounding box:  xmin: -156.2436 ymin: 3.924933 xmax: 52.85843 ymax: 48.72934</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Geodetic CRS:  +proj=longlat +datum=WGS84 +no_defs</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      bio2 bio10 bio13 bio19   response predictions         di  aoa</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8001  150   256    12    32 0.65981755  0.60203146 0.03315007 TRUE</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8002   85   248    82   196 0.30859908  0.30053636 0.08787721 TRUE</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8003  178   275    56    33 0.47365646  0.65660673 0.04132990 TRUE</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8004  100   200    74    99 0.47266462  0.39658926 0.04877910 TRUE</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8005   68   262   296   746 0.00863417 -0.01075431 0.00000000 TRUE</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8006  112   241    21    48 0.63255439  0.46702575 0.00000000 TRUE</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                        geometry</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8001   POINT (36.1216 30.23658)</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8002 POINT (-156.2436 19.73569)</span></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8003 POINT (-103.2796 31.85488)</span></span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8004  POINT (20.64971 47.14207)</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8005 POINT (-81.33804 3.924933)</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8006  POINT (52.85843 48.72934)</span></span></code></pre></div>
-<p>The predict function returns the “distance index”, or “di”, for each
-observation: a score of how far away the observation is, in predictor
-space, from your training data. Points with a “di” higher than a set
-threshold are “outside” the area of applicability. We can visualize our
-test set here to see that our model often, but not always, performs
-worse on observations with a higher “di”:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(worldclim_testing, <span class="fu">aes</span>(di, <span class="fu">abs</span>(response <span class="sc">-</span> predictions), <span class="at">color =</span> aoa)) <span class="sc">+</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>)</span></code></pre></div>
+<p>Last but not least, we can also see if there’s any areas in our data that are too different from our training data for us to safely predict on, which fall outside the “area of applicability” defined by <a href="https://doi.org/10.1111/2041-210X.13650">Meyer and Pebesma (2021)</a>. This approach looks at how similar the predictor values of new data are to the data you used to train your data, with each predictor weighted by how important it is to your model.</p>
+<p>In order to calculate your area of applicability, you can pass <code>ww_area_of_applicability()</code> information about which of your variables are used as predictors in your model, your training data, and the importance scores for each of your variables. Out of the box, waywiser should work with any of the importance score-calculating functions from the vip package:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>worldclim_aoa &lt;-<span class="st"> </span><span class="kw">ww_area_of_applicability</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a>  response <span class="op">~</span><span class="st"> </span>bio2 <span class="op">+</span><span class="st"> </span>bio10 <span class="op">+</span><span class="st"> </span>bio13 <span class="op">+</span><span class="st"> </span>bio19,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a>  worldclim_training,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a>  <span class="dt">importance =</span> vip<span class="op">::</span><span class="kw">vi_model</span>(worldclim_model)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true"></a>worldclim_aoa</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true"></a><span class="co">#&gt; # Predictors:</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true"></a><span class="co">#&gt;    4</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true"></a><span class="co">#&gt; Area-of-applicability threshold:</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true"></a><span class="co">#&gt;    0.1038107</span></span></code></pre></div>
+<p>You can also pass a data.frame with columns named “term” and “estimate” (containing the name of each term, or predictor, and their estimated importance) rather than using the vip package if that’s more convenient.</p>
+<p>The objects returned by <code>ww_area_of_applicability()</code> are models in their own right, which can be used by functions such as <code>predict()</code> to calculate if new observations are in the area of applicability of a model.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a>worldclim_testing &lt;-<span class="st"> </span><span class="kw">cbind</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a>  worldclim_testing,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a>  <span class="kw">predict</span>(worldclim_aoa, worldclim_testing)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true"></a><span class="kw">head</span>(worldclim_testing)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true"></a><span class="co">#&gt; Simple feature collection with 6 features and 8 fields</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true"></a><span class="co">#&gt; Geometry type: POINT</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true"></a><span class="co">#&gt; Bounding box:  xmin: -156.2436 ymin: 3.924933 xmax: 52.85843 ymax: 48.72934</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true"></a><span class="co">#&gt; Geodetic CRS:  +proj=longlat +datum=WGS84 +no_defs</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true"></a><span class="co">#&gt;      bio2 bio10 bio13 bio19   response predictions         di  aoa</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true"></a><span class="co">#&gt; 8001  150   256    12    32 0.65981755  0.60203146 0.03315007 TRUE</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true"></a><span class="co">#&gt; 8002   85   248    82   196 0.30859908  0.30053636 0.08787721 TRUE</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true"></a><span class="co">#&gt; 8003  178   275    56    33 0.47365646  0.65660673 0.04132990 TRUE</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true"></a><span class="co">#&gt; 8004  100   200    74    99 0.47266462  0.39658926 0.04877910 TRUE</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true"></a><span class="co">#&gt; 8005   68   262   296   746 0.00863417 -0.01075431 0.00000000 TRUE</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true"></a><span class="co">#&gt; 8006  112   241    21    48 0.63255439  0.46702575 0.00000000 TRUE</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true"></a><span class="co">#&gt;                        geometry</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true"></a><span class="co">#&gt; 8001   POINT (36.1216 30.23658)</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true"></a><span class="co">#&gt; 8002 POINT (-156.2436 19.73569)</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true"></a><span class="co">#&gt; 8003 POINT (-103.2796 31.85488)</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true"></a><span class="co">#&gt; 8004  POINT (20.64971 47.14207)</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true"></a><span class="co">#&gt; 8005 POINT (-81.33804 3.924933)</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true"></a><span class="co">#&gt; 8006  POINT (52.85843 48.72934)</span></span></code></pre></div>
+<p>The predict function returns the “distance index”, or “di”, for each observation: a score of how far away the observation is, in predictor space, from your training data. Points with a “di” higher than a set threshold are “outside” the area of applicability. We can visualize our test set here to see that our model often, but not always, performs worse on observations with a higher “di”:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a><span class="kw">ggplot</span>(worldclim_testing, <span class="kw">aes</span>(di, <span class="kw">abs</span>(response <span class="op">-</span><span class="st"> </span>predictions), <span class="dt">color =</span> aoa)) <span class="op">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.6</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,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oA2AgEAmMlosPn+rbfI7XRyZcqPF1CVjxoxxrpdOnDhx4MCBcePGxcfHz58/v6qqqrS0tLuGJ0+enDVr1ltvvRUREbFgwQJX1RnXZ/ZBDtSNg1VVVc2YMePVV1/dsGEDADzzzDOZmZnXrl3r7n6WZdetW7dz587nnnsuMTFx7ty50vtr1669evWqp8bdDiCrhTAscp4HkyvwudO31KJbABMVTYwGYrMBAAgC0behmLg+PKe4uNjsYMqUKZ988smxY8diYmKGDRtmNBp7mCUGBgZu3Ljx1KlTVVVV48ePnzFjhrNWluszJZ1Gz+hZ1W3x4sUrVqwQBEEqX1RdXT179uxly5b5VEruZoa2LqLty3/wn/yV35PH78njP/o/4dABtw0Hry5id+DaGn7/F9YdvxK+3ouvVvThCVqttry83Pmj1WoNCQmpqamRfvz8888zMjIIITqdDgBctSj/7//+b9asWa6PiomJOXHixM3P7ANuRrCCgoIXXnihU4XLb775xmM/pnQPM248uV5LWppJSxNpamAzsm61RbcAFBPL3bNEvuplduH9KNELoi//+te/kpOTY2Ptq9n58+dfunSpy1ni3Xffffbs2V27dlksFlEU8/LyAGDs2LH9twHcThFvSYXL2464BNmTz7Jz5rPzFsh+9gKEhN5qg24dnNeibp988snixYudP6rV6rlz5zpniUFBQQEOrly58v333//pT38aNmxYVFTUn/70p6+++sq525SRkRHgwvnznq2Q3Why/PSnPy0rK/vss88iIiJ4nr948eL9999/9913v/POOx5+3n5BNTk6QTU5Bgu0wiWF4kNohUsKxYe43wc7cuRIdHT0448/jhBau3btli1bPM21oVBuW9w42I4dO2bMmFFUVFRZWbl8+XKMcU5OzsaNG/1iG4Uy6HHjYDt37szJyVm8ePHevXvT09P37t2bm5s7KAsNUii3AjcO1tDQIIlm5+fnS0HP9PT069ev+8EyCmUI4MbBRo4cuWfPnvLy8v3790tFVfLz8+Pi+pLGQqHchrhxsE2bNm3bti0tLW3ixInTp0//1a9+9eKLL0rlICgUilvchOmXLFlSXl5eVlY2ffp0hFB2dvaBAwecKbwUCqVn3GemREZG8jxfW1sLAImJiQBw+fLl/pzxpFBuH9w42KeffvqTn/ykUzoiOM66UyiUnnGz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" /><!-- --></p>
 </div>
 
