@@ -1,7 +1,8 @@
 ## ---- include = FALSE---------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = rlang::is_installed("ggplot2")
 )
 
 ## ----message=FALSE------------------------------------------------------------
