@@ -1,3 +1,11 @@
+# waywiser 0.5.1
+
+* `ww_multi_scale()` now warns if you provide `crs` as an argument to `sf::st_make_grid()` via `...`. Grids created by this function will always take their CRS from `data`.
+
+* `ww_multi_scale()` now throws an error if you pass arguments via `...` while also providing a list of grids (because those arguments would be ignored).
+
+* `ww_multi_scale()` is now faster when `data` is an sf object, particularly when grids are created by passing arguments to `sf::st_make_grid()` (rather than passing grids via `grids`).
+
 # waywiser 0.5.0
 
 * `ww_multi_scale()` did not correctly handle grid cellsizes with units. Units (set using the `units` package) are now respected.
