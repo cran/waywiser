@@ -50,7 +50,7 @@
 #' arguments; or `NULL` if `truth` and `estimate` are `SpatRaster` objects.
 #' @param truth,estimate If `data` is an `sf` object, the names (optionally
 #' unquoted) for the columns in `data` containing the true and predicted values,
-#' respectively. If `data` is a `SpatRaster` object, either layer names or
+#' respectively. If `data` is a `SpatRaster` object, either (quoted) layer names or
 #' indices which will select the true and predicted layers, respectively, via
 #' [terra::subset()] If `data` is `NULL`, `SpatRaster` objects with a single
 #' layer containing the true and predicted values, respectively.
@@ -326,9 +326,60 @@ raster_method_notes <- function(grid_list) {
 }
 
 raster_method_summary <- function(grid_list, .notes, metrics, na_rm) {
+  class_metrics <- FALSE
+  prob_metrics <- FALSE
+  if (inherits(metrics, "class_prob_metric_set")) {
+    is_class_metric <- tibble::as_tibble(metrics)$class == "class_metric"
+
+    if (any(is_class_metric) && !all(is_class_metric)) {
+      rlang::abort(
+        c(
+          "`ww_multi_scale` can't handle mixed classification and class probability metric sets.",
+          i = "Call `ww_multi_scale()` twice: once for classification metrics, and once for class probability metrics."
+        ),
+        class = "waywiser_mixed_metrics"
+      )
+    }
+
+    class_metrics <- all(is_class_metric)
+    prob_metrics <- !class_metrics
+  }
+
+  if (class_metrics || prob_metrics) {
+    lvls <- unique(
+      unlist(
+        lapply(
+          grid_list$grids,
+          function(grid) {
+            out <- levels(factor(grid$.truth))
+            if (class_metrics) {
+              out <- c(out, levels(factor(grid$.estimate)))
+            }
+            out
+          }
+        )
+      )
+    )
+
+    grid_list$grids <- lapply(
+      grid_list$grids,
+      function(grid) {
+        grid$.truth <- factor(grid$.truth, levels = lvls)
+        if (class_metrics) {
+          grid$.estimate <- factor(grid$.estimate, levels = lvls)
+        }
+        grid
+      }
+    )
+  }
+
   out <- mapply(
     function(grid, grid_arg, .notes) {
-      out <- metrics(grid, .truth, .estimate, na_rm = na_rm)
+      if (prob_metrics) {
+        out <- metrics(as.data.frame(grid), truth = .truth, .estimate, na_rm = na_rm)
+      } else {
+        out <- metrics(grid, truth = .truth, estimate = .estimate, na_rm = na_rm)
+      }
       out[attr(out, "sf_column")] <- NULL
       out$.grid_args <- list(grid_list$grid_args[grid_arg, ])
       out$.grid <- list(grid)
@@ -404,7 +455,7 @@ ww_multi_scale.sf <- function(
         aggregation_function
       )
 
-      out <- metrics(matched_data, .truth, .estimate, na_rm = na_rm)
+      out <- metrics(matched_data, truth = .truth, estimate = .estimate, na_rm = na_rm)
       out["grid_cell_idx"] <- NULL
       out[attr(out, "sf_column")] <- NULL
       out$.grid_args <- list(grid_args)
@@ -594,7 +645,6 @@ check_multi_scale_data <- function(data) {
       call = rlang::caller_env()
     )
   }
-
 }
 
 #' Expand geographic bounding boxes slightly
