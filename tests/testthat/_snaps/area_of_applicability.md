@@ -1662,13 +1662,13 @@
 
     Code
       x$blueprint
-    Output
-      Formula blueprint: 
-       
-      # Predictors: 10 
-        # Outcomes: 1 
-         Intercept: FALSE 
-      Novel Levels: FALSE 
-       Composition: tibble 
-        Indicators: none 
+    Message
+      Formula blueprint:
+      # Predictors: 10
+      # Outcomes: 1
+      Intercept: FALSE
+      Novel Levels: FALSE
+      Composition: tibble
+      Indicators: none
+      
 
