@@ -1,7 +1,7 @@
-020a4c6359240f6b5ce81ac994c24f70 *DESCRIPTION
+1f7458d1922953effc037aaea615d393 *DESCRIPTION
 7d19207d78a18b1171faea5d0bc88597 *LICENSE
 56493139a9d5bf0309d472731355c808 *NAMESPACE
-d14a2cb32f867987b7894b51bbb99cec *NEWS.md
+972f8ecccdfbe89536c23d3063a6a748 *NEWS.md
 dcc01d878fef6a5978c5c16155963cf9 *R/agreement_coefficient.R
 f1eec6676ddca20082b15fafc5ba5d67 *R/area_of_applicability.R
 6f5739cea91bc8cf51ebead2fd274f28 *R/data.R
@@ -25,9 +25,9 @@ dbb07ccbc2308c17f91141b2b23ae12a *data/guerry.R
 4a45bf7979cc9dd69cca436cd7941ff7 *data/ny_trees.R
 26b9461fee20bb447b448667fa78182e *data/worldclim_simulation.R
 74ebf7f787fc7890dd0cd507bb8b692e *inst/CITATION
-ee8d302d179136098bc7de7f66990e28 *inst/doc/multi-scale-assessment.R
-7764e89da2fc0c18b4975ece8ab194a5 *inst/doc/multi-scale-assessment.Rmd
-533debaf834e291be22a527ccf1f43aa *inst/doc/multi-scale-assessment.html
+1b09f2fc4656afb7d67cedd707df00d6 *inst/doc/multi-scale-assessment.R
+f4424828cae90b36ea6d8ee7e0d35634 *inst/doc/multi-scale-assessment.Rmd
+a0789c9fb353f30529c94c3f25145336 *inst/doc/multi-scale-assessment.html
 8d875657a00ab7c7444b966ac7e262ee *inst/doc/residual-autocorrelation.R
 f08827523b729fede7392575d62afd91 *inst/doc/residual-autocorrelation.Rmd
 1a0d27a4b01c73ca9557677d8befbe77 *inst/doc/residual-autocorrelation.html
@@ -133,6 +133,6 @@ dfab0cbfe1edcd5b046b5e285a92dc05 *tests/testthat/test-srr-ww_unsystematic_mpd.R
 21eaf4ba520ec9852df46bce6f23b400 *tests/testthat/test-srr-ww_willmott_dr.R
 3fb9e2a5b8db85bf0f16ab1001d08c7f *tests/testthat/test-tidy_importance.R
 2f3b6a9d65f216785ac8c142d9966a9b *tests/testthat/test-willmott_d.R
-7764e89da2fc0c18b4975ece8ab194a5 *vignettes/multi-scale-assessment.Rmd
+f4424828cae90b36ea6d8ee7e0d35634 *vignettes/multi-scale-assessment.Rmd
 f08827523b729fede7392575d62afd91 *vignettes/residual-autocorrelation.Rmd
 5d96917709f5ce52ce5e27e3a9c9eecf *vignettes/waywiser.Rmd

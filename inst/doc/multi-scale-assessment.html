@@ -359,8 +359,12 @@ our data, if needed:</p>
 <span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
 <span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="fu">library</span>(waywiser)</span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">sf_proj_network</span>(<span class="cn">TRUE</span>))</span></code></pre></div>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="fu">invisible</span>(</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>  <span class="fu">sf_proj_search_paths</span>(</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>    <span class="fu">file.path</span>(tools<span class="sc">::</span><span class="fu">R_user_dir</span>(<span class="st">&quot;waywiser&quot;</span>, <span class="st">&quot;data&quot;</span>))</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>  )</span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>)</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">sf_proj_network</span>(<span class="cn">TRUE</span>))</span></code></pre></div>
 <p>The data we’re working with is extremely simple, reflecting the
 number of trees and amount of aboveground biomass (“AGB”, the total
 amount of aboveground woody bits) at a number of plots across New York
